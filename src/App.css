@@ -225,6 +225,9 @@
   }
 
   .stat-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 14px;
@@ -233,7 +236,6 @@
     overflow: hidden;
     backdrop-filter: blur(10px);
     transition: transform 0.2s, border-color 0.2s;
-    animation: fadeUp 0.5s both;
   }
 
   .stat-card:nth-child(1) { animation-delay: 0.05s; }
@@ -268,7 +270,7 @@
     font-size: 32px;
     line-height: 1;
     color: var(--text-primary);
-    margin-bottom: 4px;
+    margin-bottom: 40px;
   }
 
   .stat-label {
@@ -347,7 +349,7 @@
     letter-spacing: 0.05em;
   }
 
-  .card-body { padding: 18px 22px; }
+  .card-body { padding: 18px 22px; height: 320px; overflow-y: auto; }
 
   .req-table { width: 100%; border-collapse: collapse; }
 
@@ -406,7 +408,7 @@
     background: currentColor;
   }
 
-  .status-stack { display: flex; flex-direction: column; gap: 10px; }
+  .container-status { display: flex; flex-direction: column; gap: 10px; }
 
   .status-item {
     display: flex; align-items: center; gap: 12px;
@@ -515,18 +517,27 @@
   .flag-alert {
     width: 28px; height: 28px;
     border-radius: 7px;
-    background: rgba(244,63,94,0.12);
     display: flex; align-items: center; justify-content: center;
     font-size: 13px;
     flex-shrink: 0;
   }
+
+  .bg-rendah { background: rgba(245,158,11,0.12); }
+  .bg-tinggi { background: rgba(245,158,11,0.12); }
+  .bg-normal { background: rgba(16,185,129,0.12); }
+  .bg-kritis { background: rgba(244,63,94,0.12); }
 
   .flag-info { flex: 1; }
   .flag-name { font-size: 12px; font-weight: 700; }
   .flag-detail { font-size: 10px; color: var(--text-dim); font-family: 'DM Mono', monospace; margin-top: 1px; }
   .flag-value { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 600; }
   .flag-kritis { color: var(--rose); }
-  .flag-abnormal { color: var(--amber); }
+  .flag-tinggi { color: var(--amber); }
+  .flag-normal { color: var(--green); }
+  .flag-rendah { color: var(--amber); }
+  .flag-selesai { color: var(--green); }
+  .flag-proses { color: var(--accent-bright); }
+  .flag-antri { color: var(--amber); }
 
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(16px); }
