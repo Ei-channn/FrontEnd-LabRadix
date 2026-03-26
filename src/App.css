@@ -54,6 +54,7 @@
   }
 
   .sidebar-logo {
+    height: 20%;
     padding: 0 24px 28px;
     border-bottom: 1px solid var(--border);
     margin-bottom: 20px;
@@ -84,6 +85,8 @@
   }
 
   .nav-section {
+    overflow-y: auto;
+    height: 70%;
     padding: 0 14px;
     flex: 1;
   }
@@ -142,6 +145,8 @@
   }
 
   .sidebar-footer {
+    height: 8%;
+    position: relative;
     padding: 16px 24px 0;
     border-top: 1px solid var(--border);
     margin-top: auto;
@@ -160,6 +165,16 @@
   .user-info { flex: 1; min-width: 0; }
   .user-name { font-size: 12px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .user-role { font-size: 10px; color: var(--text-dim); font-family: 'DM Mono', monospace; }
+
+  .container-button button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--accent-bright);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.05em;
+  }
 
   .main {
     margin-left: 240px;
@@ -258,6 +273,8 @@
   .stat-card.c2::after { background: var(--teal); }
   .stat-card.c3::after { background: var(--amber); }
   .stat-card.c4::after { background: var(--rose); }
+  .stat-card.labotarium::after { background: var(--teal); }
+  .stat-card.radiologi::after { background: var(--amber); }
 
   .stat-icon {
     font-size: 20px;
@@ -386,8 +403,8 @@
     font-family: 'DM Mono', monospace;
   }
 
-  .type-lab { background: rgba(46,196,182,0.12); color: var(--teal); }
-  .type-rad { background: rgba(157,125,232,0.12); color: var(--accent-bright); }
+  .type-labotarium { background: rgba(46,196,182,0.12); color: var(--teal); }
+  .type-radiologi { background: rgba(157,125,232,0.12); color: var(--accent-bright); }
 
   .status-badge {
     display: inline-flex; align-items: center; gap: 5px;

@@ -3,8 +3,6 @@ import api from "../services/api";
 
 function Main() {
 
-    console.log("TOKEN:", localStorage.getItem("token"));
-
     const [totalPermintaan, setTotalPermintaan] = useState(0);
     const [kategori, setKategori] = useState([]);
     const [permintaan, setPermintaan] = useState([]);
@@ -12,6 +10,9 @@ function Main() {
     const [status, setStatus] = useState([]);
     const [kritis, setKritis] = useState([]);
     const [distribusi, setDistribusi] = useState([]);
+    const [user, setUser] = useState([]);
+    const [laporan, setLaporan] = useState([]);
+    const [parameter, setParameter] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -52,7 +53,7 @@ function Main() {
             try {
                 const response = await api.get("/status");
 
-                setStatus(response.data.data);
+                setStatus(response.data);
 
             } catch (error) {
                 console.log("Error fetch hasil:", error);
@@ -110,8 +111,58 @@ function Main() {
         fetchData();
     }, []);
 
-    console.log("hasil :", kategori);
-    // console.log("hasil :", permintaan);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await api.get("/user");
+
+                const data = response.data;
+
+                setUser(data);
+
+            } catch (error) {
+                console.log("Error fetch permintaan:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await api.get("laporan");
+
+                const data = response.data;
+
+                setLaporan(data);
+
+            } catch (error) {
+                console.log("Error fetch permintaan:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await api.get("/parameter");
+
+                const data = response.data?.data?.data || [];
+
+                setParameter(data);
+
+            } catch (error) {
+                console.log("Error fetch permintaan:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    console.log(parameter)
 
     return (
         <div>
@@ -119,66 +170,122 @@ function Main() {
                 <div className="topbar">
                     <div className="page-title">
                         <span>Sistem Informasi</span>
-                        Dashboard Utama
+                        Welcome {user?.name}
                     </div>
                     <div className="topbar-right">
                         <button className="topbar-btn">Hari Ini — 13 Mar 2026</button>
                         <button className="topbar-btn">Notifikasi</button>
-                        <button className="topbar-btn primary">+ Permintaan Baru</button>
+                        {user?.role === "dokter" && (
+                            <button className="topbar-btn primary">+ Permintaan Baru</button>
+                        )}
                     </div>
                 </div>
 
-                <div className="stats-row">
-                    <div className="stat-card c1">
-                        <div className="stat-value">{totalPermintaan}</div>
-                        <div className="stat-label">Total Permintaan</div>
-                    </div>
-                    {Array.isArray(kategori) && kategori.map((item) => (
-                        <div className="stat-card c2" key={item.kategori}>
-                            <div className="stat-value">{item.total}</div>
-                            <div className="stat-label">Pemeriksaan {item.kategori}</div>
+                {user?.role === 'admin' && (
+                    <div className="stats-row">
+                        <div className="stat-card c1">
+                            <div className="stat-value">{laporan.pasien_harian}</div>
+                            <div className="stat-label">Pasien Harian</div>
                         </div>
-                    ))}
-                    <div className="stat-card c4">
-                        <div className="stat-value">{kritis}</div>
-                        <div className="stat-label">Nilai Kritis</div>
+                        <div className="stat-card c2">
+                            <div className="stat-value">{laporan.total_pasien}</div>
+                            <div className="stat-label">Total Pasien</div>
+                        </div>
+                        <div className="stat-card c3">
+                            <div className="stat-value">{laporan.total_dokter}</div>
+                            <div className="stat-label">Total Dokter</div>
+                        </div>
+                        <div className="stat-card c4">
+                            <div className="stat-value">{laporan.total_petugas_lab}</div>
+                            <div className="stat-label">Total Petugas Lab</div>
+                        </div>
                     </div>
-                </div>
+                )}
+                {(user?.role === 'dokter' || user?.role === 'petugas_lab') && (
+                    <div className="stats-row">
+                        <div className="stat-card c1">
+                            <div className="stat-value">{totalPermintaan}</div>
+                            <div className="stat-label">Total Permintaan</div>
+                        </div>
+                        {Array.isArray(kategori) && kategori.map((item) => (
+                            <div key={item.kategori} className={`stat-card ${item.kategori}`} >
+                                <div className="stat-value">{item.total}</div>
+                                <div className="stat-label">Pemeriksaan {item.kategori}</div>
+                            </div>
+                        ))}
+                        <div className="stat-card c4">
+                            <div className="stat-value">{kritis}</div>
+                            <div className="stat-label">Nilai Kritis</div>
+                        </div>
+                    </div>
+                )}
                 <div className="grid-2">
                     <div className="card">
                         <div className="card-header">
                             <div className="card-title">
                                 <span className="card-title-dot"></span>
-                                Permintaan Aktif
-                            </div>
+                                    {user?.role === 'admin' ? 'Parameter Pemeriksaan' : "Permintaan Aktif"}
+                            </div> 
                             <span className="card-action">Lihat Semua</span>
                         </div>
                         <div className="card-body" style={{padding: '11px 0 8px'}}>
                             <table className="req-table">
-                                <thead>
-                                    <tr>
-                                        <th>Pasien</th>
-                                        <th>Jenis</th>
-                                        <th>Pemeriksaan</th>
-                                        <th>Dokter</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {Array.isArray(permintaan) && permintaan.map((item) => (
-                                        <tr key={item.id}>
-                                            <td>
-                                                <div className="patient-info">
-                                                    <span className="patient-name">{item.pasien?.nama_pasien}</span>
-                                                </div>
-                                            </td>
-                                            <td><span className="type-badge type-lab">{item.jenis_pemeriksaan?.kategori}</span></td>
-                                            <td style={{fontSize: "11px"}}>{item.jenis_pemeriksaan?.nama_jenis}</td>
-                                            <td style={{fontSize: "11px", color: '#8fa3bd'}}>{item.dokter?.nama_dokter}</td>
-                                            <td><span className={`status-badge status-${item.status_pemeriksaan}`}><span className="status-dot"></span>{item.status_pemeriksaan}</span></td>
-                                        </tr>
-                                    ))}
-                                </tbody>
+                                {user?.role === 'admin' && (
+                                    <>
+                                        <thead>
+                                            <tr>
+                                                <th>Parameter</th>
+                                                <th>Jenis</th>
+                                                <th>Normal Min</th>
+                                                <th>Normal Max</th>
+                                                <th>Satuan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {Array.isArray(parameter) && parameter.map((item) => (
+                                                <tr key={item.id}>
+                                                    <td>
+                                                        <div className="patient-info">
+                                                            <span className="patient-name">{item.nama_parameter}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td><span className={`type-badge type-${item.jenis_pemeriksaan?.kategori}`}>{item.jenis_pemeriksaan?.nama_jenis}</span></td>
+                                                    <td style={{fontSize: "11px"}}>{item.nilai_normal_min}</td>
+                                                    <td style={{fontSize: "11px", color: '#8fa3bd'}}>{item.nilai_normal_max}</td>
+                                                    <td style={{fontSize: "11px", color: '#8fa3bd'}}>{item.satuan}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </>
+                                )}
+                                {(user?.role === 'dokter' || user?.role === 'petugas_lab') && (
+                                    <>
+                                        <thead>
+                                            <tr>
+                                                <th>Pasien</th>
+                                                <th>Jenis</th>
+                                                <th>Pemeriksaan</th>
+                                                <th>Dokter</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {Array.isArray(permintaan) && permintaan.map((item) => (
+                                                <tr key={item.id}>
+                                                    <td>
+                                                        <div className="patient-info">
+                                                            <span className="patient-name">{item.pasien?.nama_pasien}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td><span className={`type-badge type-${item.jenis_pemeriksaan?.kategori}`}>{item.jenis_pemeriksaan?.kategori}</span></td>
+                                                    <td style={{fontSize: "11px"}}>{item.jenis_pemeriksaan?.nama_jenis}</td>
+                                                    <td style={{fontSize: "11px", color: '#8fa3bd'}}>{item.dokter?.nama_dokter}</td>
+                                                    <td><span className={`status-badge status-${item.status_pemeriksaan}`}><span className="status-dot"></span>{item.status_pemeriksaan}</span></td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </>
+                                )}
                             </table>
                         </div>
                     </div>
@@ -189,22 +296,36 @@ function Main() {
                         </div>
                         <div className="card-body">
                             <div className="container-status">
-                                {Array.isArray(status) && status.map((item) => (
-                                    <div className="status-stack" key={item.status_pemeriksaan}>
-                                        <div className="status-item">
-                                            <div className={`status-item-icon si-${item?.status_pemeriksaan}`}></div>
-                                            <div className="status-item-info">
-                                                <div className="status-item-label">{item?.status_pemeriksaan}</div>
-                                                <div className="status-item-sub">
-                                                    {item.status_pemeriksaan === 'antri' ? 'Menunggu diproses' : 
-                                                    item.status_pemeriksaan === 'proses' ? 'Sedang dikerjakan' : 
-                                                    'Siap distribusi'}
-                                                </div>
-                                            </div>
-                                            <div className={`status-item-count flag-${item?.status_pemeriksaan}`}>{item?.total}</div>
+                                <div className="status-stack">
+                                    <div className="status-item">
+                                        <div className="status-item-icon si-selesai"></div>
+                                        <div className="status-item-info">
+                                            <div className="status-item-label">Selesai</div>
+                                            <div className="status-item-sub">Siap distribusi</div>
                                         </div>
+                                        <div className="status-item-count flag-selesai">{status?.selesai}</div>
                                     </div>
-                                ))}
+                                </div>
+                                <div className="status-stack">
+                                    <div className="status-item">
+                                        <div className="status-item-icon si-proses"></div>
+                                        <div className="status-item-info">
+                                            <div className="status-item-label">Proses</div>
+                                            <div className="status-item-sub">Sedang dikerjakan</div>
+                                        </div>
+                                        <div className="status-item-count flag-proses">{status?.proses}</div>
+                                    </div>
+                                </div>
+                                <div className="status-stack">
+                                    <div className="status-item">
+                                        <div className="status-item-icon si-antri"></div>
+                                        <div className="status-item-info">
+                                            <div className="status-item-label">Antri</div>
+                                            <div className="status-item-sub">Menunggu diproses</div>
+                                        </div>
+                                        <div className="status-item-count flag-antri">{status?.antri}</div>
+                                    </div>
+                                </div>
                                 <div className="status-item">
                                     <div className="status-item-icon si-kritis"></div>
                                     <div className="status-item-info">
