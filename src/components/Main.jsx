@@ -639,12 +639,22 @@ function Main() {
                                     <div className="legend-item">
                                         <div className="legend-dot" 
                                             style={{background: "#2ec4b6"}}>
-                                        </div> Lab
+                                        </div> Normal
                                     </div>
                                     <div className="legend-item">
                                         <div className="legend-dot" 
                                             style={{background: "#9d7de8"}}>
-                                        </div> Radiologi
+                                        </div> Tinggi
+                                    </div>
+                                    <div className="legend-item">
+                                        <div className="legend-dot" 
+                                            style={{background: "#f59e0b"}}>
+                                        </div> Rendah
+                                    </div>
+                                    <div className="legend-item">
+                                        <div className="legend-dot" 
+                                            style={{background: "#f43f5e"}}>
+                                        </div> Kritis
                                     </div>
                                 </div>
                                 <div className="chart-labels">

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { Link } from "react-router-dom";
 
 function Nav() {
 
@@ -49,9 +50,9 @@ function Nav() {
 
                 <nav className="nav-section">
                     <div className="nav-label">Menu Utama</div>
-                    <a className="nav-item" href="#">Dashboard</a>
+                    <Link to="/dashboard"><p className="nav-item">Dashboard</p></Link>
                     {user.role === 'dokter' && (
-                        <a className="nav-item" href="#">Permintaan</a>
+                        <Link to="/permintaan"><p className="nav-item">Permintaan</p></Link>
                     )}
 
                     {user.role === 'admin' && (
