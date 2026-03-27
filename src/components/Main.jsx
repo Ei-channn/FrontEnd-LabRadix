@@ -6,13 +6,16 @@ function Main() {
     const [totalPermintaan, setTotalPermintaan] = useState(0);
     const [kategori, setKategori] = useState([]);
     const [permintaan, setPermintaan] = useState([]);
+    const [pasien, setPasien] = useState([]);
     const [hasil, setHasil] = useState([]);
     const [status, setStatus] = useState([]);
     const [kritis, setKritis] = useState([]);
     const [distribusi, setDistribusi] = useState([]);
     const [user, setUser] = useState([]);
+    const [users, setUsers] = useState([]);
     const [laporan, setLaporan] = useState([]);
     const [parameter, setParameter] = useState([]);
+    const [jenis, setJenis] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -22,6 +25,23 @@ function Main() {
                 const data = response.data?.data?.data || [];
 
                 setPermintaan(data);
+
+            } catch (error) {
+                console.log("Error fetch permintaan:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await api.get("/pasien");
+
+                const data = response.data?.data?.data || [];
+
+                setPasien(data);
 
             } catch (error) {
                 console.log("Error fetch permintaan:", error);
@@ -127,6 +147,23 @@ function Main() {
 
         fetchData();
     }, []);
+    
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await api.get("/users");
+
+                const data = response.data.data;
+
+                setUsers(data);
+
+            } catch (error) {
+                console.log("Error fetch permintaan:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -162,7 +199,24 @@ function Main() {
         fetchData();
     }, []);
 
-    console.log(parameter)
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await api.get("/jenis");
+
+                const data = response.data?.data?.data || [];
+
+                setJenis(data);
+
+            } catch (error) {
+                console.log("Error fetch permintaan:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    // console.log(pasien)
 
     return (
         <div>
@@ -181,50 +235,55 @@ function Main() {
                     </div>
                 </div>
 
-                {user?.role === 'admin' && (
-                    <div className="stats-row">
-                        <div className="stat-card c1">
-                            <div className="stat-value">{laporan.pasien_harian}</div>
-                            <div className="stat-label">Pasien Harian</div>
-                        </div>
-                        <div className="stat-card c2">
-                            <div className="stat-value">{laporan.total_pasien}</div>
-                            <div className="stat-label">Total Pasien</div>
-                        </div>
-                        <div className="stat-card c3">
-                            <div className="stat-value">{laporan.total_dokter}</div>
-                            <div className="stat-label">Total Dokter</div>
-                        </div>
-                        <div className="stat-card c4">
-                            <div className="stat-value">{laporan.total_petugas_lab}</div>
-                            <div className="stat-label">Total Petugas Lab</div>
-                        </div>
-                    </div>
-                )}
-                {(user?.role === 'dokter' || user?.role === 'petugas_lab') && (
-                    <div className="stats-row">
-                        <div className="stat-card c1">
-                            <div className="stat-value">{totalPermintaan}</div>
-                            <div className="stat-label">Total Permintaan</div>
-                        </div>
-                        {Array.isArray(kategori) && kategori.map((item) => (
-                            <div key={item.kategori} className={`stat-card ${item.kategori}`} >
-                                <div className="stat-value">{item.total}</div>
-                                <div className="stat-label">Pemeriksaan {item.kategori}</div>
+                <div className="stats-row">
+                    {user?.role === 'admin' && (
+                        <>
+                            <div className="stat-card c1">
+                                <div className="stat-value">{laporan.pasien_harian}</div>
+                                <div className="stat-label">Pasien Harian</div>
                             </div>
-                        ))}
-                        <div className="stat-card c4">
-                            <div className="stat-value">{kritis}</div>
-                            <div className="stat-label">Nilai Kritis</div>
-                        </div>
-                    </div>
-                )}
+                            <div className="stat-card c2">
+                                <div className="stat-value">{laporan.total_pasien}</div>
+                                <div className="stat-label">Total Pasien</div>
+                            </div>
+                            <div className="stat-card c3">
+                                <div className="stat-value">{laporan.total_dokter}</div>
+                                <div className="stat-label">Total Dokter</div>
+                            </div>
+                            <div className="stat-card c4">
+                                <div className="stat-value">{laporan.total_petugas_lab}</div>
+                                <div className="stat-label">Total Petugas Lab</div>
+                            </div>
+                        </>
+                    )}
+                    {(user?.role === 'dokter' || user?.role === 'petugas_lab') && (
+                        <>
+                            <div className="stat-card c1">
+                                <div className="stat-value">{totalPermintaan}</div>
+                                <div className="stat-label">Total Permintaan</div>
+                            </div>
+                            {Array.isArray(kategori) && kategori.map((item) => (
+                                <div key={item.kategori} className={`stat-card ${item.kategori}`} >
+                                    <div className="stat-value">{item.total}</div>
+                                    <div className="stat-label">Pemeriksaan {item.kategori}</div>
+                                </div>
+                            ))}
+                            <div className="stat-card c4">
+                                <div className="stat-value">{kritis}</div>
+                                <div className="stat-label">Nilai Kritis</div>
+                            </div>
+                        </>
+                    )}
+                </div>
+                
                 <div className="grid-2">
                     <div className="card">
                         <div className="card-header">
                             <div className="card-title">
                                 <span className="card-title-dot"></span>
-                                    {user?.role === 'admin' ? 'Parameter Pemeriksaan' : "Permintaan Aktif"}
+                                    {user?.role === 'admin' ? 'Parameter Pemeriksaan' :
+                                        "Permintaan Aktif" 
+                                    }
                             </div> 
                             <span className="card-action">Lihat Semua</span>
                         </div>
@@ -246,13 +305,33 @@ function Main() {
                                                 <tr key={item.id}>
                                                     <td>
                                                         <div className="patient-info">
-                                                            <span className="patient-name">{item.nama_parameter}</span>
+                                                            <span className="patient-name">
+                                                                {item.nama_parameter}
+                                                            </span>
                                                         </div>
                                                     </td>
-                                                    <td><span className={`type-badge type-${item.jenis_pemeriksaan?.kategori}`}>{item.jenis_pemeriksaan?.nama_jenis}</span></td>
-                                                    <td style={{fontSize: "11px"}}>{item.nilai_normal_min}</td>
-                                                    <td style={{fontSize: "11px", color: '#8fa3bd'}}>{item.nilai_normal_max}</td>
-                                                    <td style={{fontSize: "11px", color: '#8fa3bd'}}>{item.satuan}</td>
+                                                    <td>
+                                                        <span className={
+                                                            `type-badge type-${
+                                                                item.jenis_pemeriksaan?.kategori
+                                                            }`}>
+                                                            {item.jenis_pemeriksaan?.nama_jenis}
+                                                        </span>
+                                                    </td>
+                                                    <td style={{fontSize: "11px"}}>
+                                                        {item.nilai_normal_min}
+                                                    </td>
+                                                    <td 
+                                                        style={{
+                                                            fontSize: "11px", color: '#8fa3bd'
+                                                    }}>
+                                                        {item.nilai_normal_max}
+                                                    </td>
+                                                    <td 
+                                                        style={{fontSize: "11px", color: '#8fa3bd'
+                                                    }}>
+                                                        {item.satuan}
+                                                    </td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -274,13 +353,32 @@ function Main() {
                                                 <tr key={item.id}>
                                                     <td>
                                                         <div className="patient-info">
-                                                            <span className="patient-name">{item.pasien?.nama_pasien}</span>
+                                                            <span className="patient-name">
+                                                                {item.pasien?.nama_pasien}
+                                                            </span>
                                                         </div>
                                                     </td>
-                                                    <td><span className={`type-badge type-${item.jenis_pemeriksaan?.kategori}`}>{item.jenis_pemeriksaan?.kategori}</span></td>
-                                                    <td style={{fontSize: "11px"}}>{item.jenis_pemeriksaan?.nama_jenis}</td>
-                                                    <td style={{fontSize: "11px", color: '#8fa3bd'}}>{item.dokter?.nama_dokter}</td>
-                                                    <td><span className={`status-badge status-${item.status_pemeriksaan}`}><span className="status-dot"></span>{item.status_pemeriksaan}</span></td>
+                                                    <td>
+                                                        <span className={`type-badge type-${
+                                                            item.jenis_pemeriksaan?.kategori
+                                                        }`}>
+                                                            {item.jenis_pemeriksaan?.kategori}
+                                                        </span>
+                                                    </td>
+                                                    <td style={{fontSize: "11px"}}>
+                                                        {item.jenis_pemeriksaan?.nama_jenis}
+                                                    </td>
+                                                    <td style=
+                                                        {{fontSize: "11px", color: '#8fa3bd'}}>
+                                                        {item.dokter?.nama_dokter}
+                                                    </td>
+                                                    <td><span className={
+                                                        `status-badge status-${
+                                                            item.status_pemeriksaan}`}>
+                                                            <span className="status-dot"></span>
+                                                            {item.status_pemeriksaan}
+                                                        </span>
+                                                    </td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -292,129 +390,330 @@ function Main() {
 
                     <div className="card">
                         <div className="card-header">
-                            <div className="card-title">Status Pemeriksaan</div>
-                        </div>
-                        <div className="card-body">
-                            <div className="container-status">
-                                <div className="status-stack">
-                                    <div className="status-item">
-                                        <div className="status-item-icon si-selesai"></div>
-                                        <div className="status-item-info">
-                                            <div className="status-item-label">Selesai</div>
-                                            <div className="status-item-sub">Siap distribusi</div>
-                                        </div>
-                                        <div className="status-item-count flag-selesai">{status?.selesai}</div>
-                                    </div>
-                                </div>
-                                <div className="status-stack">
-                                    <div className="status-item">
-                                        <div className="status-item-icon si-proses"></div>
-                                        <div className="status-item-info">
-                                            <div className="status-item-label">Proses</div>
-                                            <div className="status-item-sub">Sedang dikerjakan</div>
-                                        </div>
-                                        <div className="status-item-count flag-proses">{status?.proses}</div>
-                                    </div>
-                                </div>
-                                <div className="status-stack">
-                                    <div className="status-item">
-                                        <div className="status-item-icon si-antri"></div>
-                                        <div className="status-item-info">
-                                            <div className="status-item-label">Antri</div>
-                                            <div className="status-item-sub">Menunggu diproses</div>
-                                        </div>
-                                        <div className="status-item-count flag-antri">{status?.antri}</div>
-                                    </div>
-                                </div>
-                                <div className="status-item">
-                                    <div className="status-item-icon si-kritis"></div>
-                                    <div className="status-item-info">
-                                        <div className="status-item-label">Nilai Kritis</div>
-                                        <div className="status-item-sub">Perlu tindakan</div>
-                                    </div>
-                                    <div className="status-item-count" style={{color: '#f43f5e'}}>{kritis}</div>
-                                </div>
+                            <div className="card-title">
+                                {user.role === 'admin' ? 'Jenis Pemeriksaan' : "Status Pemeriksaan"}
                             </div>
                         </div>
+                        {user.role === 'admin' && (
+                            <div className="card-body" style={{padding: '11px 0 8px'}}>
+                                <table className="req-table">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Pemeriksaan</th>
+                                            <th>Kategori</th>
+                                            <th>Jumah Parameter</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {Array.isArray(jenis) && jenis.map((item, index) => (
+                                            <tr key={item.id}>
+                                                <td style={{fontSize: "11px"}}>{index + 1}</td>
+                                                <td>
+                                                    <div className="patient-info">
+                                                        <span className="patient-name">
+                                                            {item.nama_jenis}
+                                                        </span>
+                                                    </div>
+                                                    </td>
+                                                <td>
+                                                    <span className={`type-badge type-${
+                                                        item.kategori}`
+                                                    }>
+                                                        {item.kategori}
+                                                    </span>
+                                                </td>
+                                                <td style={{fontSize: "11px", color: '#8fa3bd'}}>
+                                                    {item.parameter_pemeriksaan_count}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                        {(user.role === 'dokter' || user.role === 'petugas_lab') && (
+                            <div className="card-body">
+                                <div className="container-status">
+                                    <div className="status-stack">
+                                        <div className="status-item">
+                                            <div className="status-item-icon si-selesai"></div>
+                                            <div className="status-item-info">
+                                                <div className="status-item-label">Selesai</div>
+                                                <div className="status-item-sub">
+                                                    Siap distribusi
+                                                </div>
+                                            </div>
+                                            <div className="status-item-count flag-selesai">
+                                                {status?.selesai}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="status-stack">
+                                        <div className="status-item">
+                                            <div className="status-item-icon si-proses"></div>
+                                            <div className="status-item-info">
+                                                <div className="status-item-label">Proses</div>
+                                                <div className="status-item-sub">
+                                                    Sedang dikerjakan
+                                                </div>
+                                            </div>
+                                            <div className="status-item-count flag-proses">
+                                                {status?.proses}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="status-stack">
+                                        <div className="status-item">
+                                            <div className="status-item-icon si-antri"></div>
+                                            <div className="status-item-info">
+                                                <div className="status-item-label">Antri</div>
+                                                <div className="status-item-sub">
+                                                    Menunggu diproses
+                                                </div>
+                                            </div>
+                                            <div className="status-item-count flag-antri">
+                                                {status?.antri}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="status-item">
+                                        <div className="status-item-icon si-kritis"></div>
+                                        <div className="status-item-info">
+                                        <div className="status-item-label">Nilai Kritis</div>
+                                            <div className="status-item-sub">Perlu tindakan</div>
+                                        </div>
+                                        <div className="status-item-count" 
+                                            style={{color: '#f43f5e'}}
+                                        >
+                                            {kritis}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
-                <div className="grid-3">
-                    <div className="card" style={{animationDelay: "0.35s"}}>
-                        <div className="card-header">
-                            <div className="card-title">Volume Harian</div>
-                            <span className="card-action">7 Hari</span>
-                        </div>
-                        <div className="card-body">
-                            <div className="chart-legend">
-                                <div className="legend-item">
-                                    <div className="legend-dot" style={{background: "#2ec4b6"}}></div> Lab
+                <div className="grid-4">
+                    {user.role === 'admin' && (
+                        <>
+                            <div className="card">
+                                <div className="card-header">
+                                    <div className="card-title">
+                                        User Data
+                                    </div> 
+                                    <span className="card-action">Lihat Semua</span>
                                 </div>
-                                <div className="legend-item">
-                                    <div className="legend-dot" style={{background: "#9d7de8"}}></div> Radiologi
+                                <div className="card-body" style={{padding: '11px 0 8px'}}>
+                                    <table className="req-table">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Nama</th>
+                                                <th>Email</th>
+                                                <th>Role</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {Array.isArray(users) && users.map((item, index) => (
+                                                <tr key={item.id}>
+                                                    <td style={{fontSize: "11px"}}>
+                                                        {index + 1}
+                                                    </td>
+                                                    <td >
+                                                        <div className="patient-info">
+                                                            <span className="patient-name">
+                                                                {item.name}
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td style={{fontSize: "11px"}}>
+                                                        {item.email}
+                                                    </td>
+                                                    <td>
+                                                        <span className={`type-badge type-${
+                                                            item.role}`
+                                                        }>
+                                                            {item.role}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                            <div className="chart-labels">
-                                <div className="chart-label-item">Sen</div>
-                                <div className="chart-label-item">Sel</div>
-                                <div className="chart-label-item">Rab</div>
-                                <div className="chart-label-item">Kam</div>
-                                <div className="chart-label-item">Jum</div>
-                                <div className="chart-label-item">Sab</div>
-                                <div className="chart-label-item">Min</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="card">
-                        <div className="card-header">
-                            <div className="card-title">
-                                <span style={{color: "#f43f5e"}}>⚠</span> Flagging Nilai
-                            </div>
-                            <span className="card-action">Lihat Semua</span>
-                        </div>
-                        <div className="card-body">
-                            <div className="flag-list">
-                                {Array.isArray(hasil) && hasil.map((item) => (
-                                    <div className="flag-item" key={item.id}>
-                                        <div className={`flag-alert bg-${item.status}`} ></div>
-                                        <div className="flag-info">
-                                            <div className="flag-name">
-                                                {item.permintaan_pemeriksaan?.pasien?.nama_pasien} - {item.parameter_pemeriksaan?.nama_parameter}
-                                            </div>
-                                            <div className="flag-detail">
-                                                Normal: {item.parameter_pemeriksaan?.nilai_normal_min} | Pasien: {item?.nilai_hasil}
-                                            </div>
-                                        </div>
-                                        <div className={`flag-value flag-${item.status}`}>
-                                            {item.status?.toUpperCase()}
-                                        </div>
+                            <div className="card">
+                                <div className="card-header">
+                                    <div className="card-title">
+                                        <span className="card-title-dot"></span>
+                                        Pasien Data
                                     </div>
-                                ))}
+                                </div>
+                                <div className="card-body" style={{padding: '11px 0 8px'}}>
+                                    <table className="req-table">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Nama</th>
+                                                <th>Tanggal Lahir</th>
+                                                <th>Alamat</th>
+                                                <th>Jenis Kelamin</th>
+                                                <th>No Telp</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {Array.isArray(pasien) && pasien.map((item, index) => (
+                                                <tr key={item.id}>
+                                                    <td style={{fontSize: "11px"}}>{index + 1}</td>
+                                                    <td>
+                                                        <div className="patient-info">
+                                                            <span className="patient-name">
+                                                                {item.nama_pasien}
+                                                            </span>
+                                                        </div>
+                                                        </td>
+                                                    <td style={{fontSize: "11px"}}>
+                                                        {item.tanggal_lahir}
+                                                    </td>
+                                                    <td style={{fontSize: "11px"}}>
+                                                        {item.alamat}
+                                                    </td>
+                                                    <td style={{fontSize: "11px", color: '#8fa3bd'}}>
+                                                        {item.jenis_kelamin}
+                                                    </td>
+                                                    <td style={{fontSize: "11px"}}>
+                                                        {item.no_telp}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div className="card" style={{animationDelay: "0.45s"}}>
-                        <div className="card-header">
-                            <div className="card-title">Distribusi Hasil</div>
-                        </div>
-                        <div className="card-body">
-                            {Array.isArray(distribusi) && distribusi.map((item) => (
-                                <div className="flag-list" key={item.id}>
-                                    <div className="flag-item" style={{borderColor: "rgba(46,196,182,0.15)"}}>
-                                        <div className="flag-alert" style={{background: "rgba(46,196,182,0.1)"}}></div>
-                                        <div className="flag-info">
-                                            <div className="flag-name">{item.hasil_pemeriksaan?.permintaan_pemeriksaan?.pasien?.nama_pasien}</div>
-                                            <div className="flag-detail">{item.hasil_pemeriksaan?.permintaan_pemeriksaan?.jenis_pemeriksaan?.nama_jenis} 
-                                                → {item.hasil_pemeriksaan?.permintaan_pemeriksaan?.dokter?.nama_dokter}
+                        </>
+                    )}
+                    {(user.role === 'dokter' || user.role === 'petugas_lab') && (
+                        <div className="card">
+                            <div className="card-header">
+                                <div className="card-title">
+                                    Flagging Nilai
+                                </div>
+                                <span className="card-action">Lihat Semua</span>
+                            </div>
+                            <div className="card-body">
+                                <div className="flag-list">
+                                    {Array.isArray(hasil) && hasil.map((item) => (
+                                        <div className="flag-item" key={item.id}>
+                                            <div className={`flag-alert bg-${item.status}`} ></div>
+                                            <div className="flag-info">
+                                                <div className="flag-name">
+                                                    {item.permintaan_pemeriksaan?.pasien?.
+                                                    nama_pasien} - {
+                                                        item.parameter_pemeriksaan?.nama_parameter
+                                                    }
                                                 </div>
+                                                <div className="flag-detail">
+                                                    Normal: 
+                                                    {item.parameter_pemeriksaan?.nilai_normal_min
+                                                    } | Pasien: {item?.nilai_hasil}
+                                                </div>
+                                            </div>
+                                            <div className={`flag-value flag-${item.status}`}>
+                                                {item.status?.toUpperCase()}
+                                            </div>
                                         </div>
-                                        <div className="flag-value" style={{color: "#2ec4b6", fontSize: "10px"}}>{item.dikirim_ke_pasien == '1' ? 'Terkirim' : 'Belum'}</div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    {user.role === 'dokter' && (
+                        <div className="card" style={{animationDelay: "0.35s"}}>
+                            <div className="card-header">
+                                <div className="card-title">Volume Harian</div>
+                                <span className="card-action">7 Hari</span>
+                            </div>
+                            <div className="card-body">
+                                <div className="chart-legend">
+                                    <div className="legend-item">
+                                        <div className="legend-dot" 
+                                            style={{background: "#2ec4b6"}}>
+                                        </div> Lab
+                                    </div>
+                                    <div className="legend-item">
+                                        <div className="legend-dot" 
+                                            style={{background: "#9d7de8"}}>
+                                        </div> Radiologi
                                     </div>
                                 </div>
-                            ))}
+                                <div className="chart-labels">
+                                    <div className="chart-label-item">Sen</div>
+                                    <div className="chart-label-item">Sel</div>
+                                    <div className="chart-label-item">Rab</div>
+                                    <div className="chart-label-item">Kam</div>
+                                    <div className="chart-label-item">Jum</div>
+                                    <div className="chart-label-item">Sab</div>
+                                    <div className="chart-label-item">Min</div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    )}
+                    {user.role === 'petugas_lab' && (
+                        <div className="card" style={{animationDelay: "0.45s"}}>
+                            <div className="card-header">
+                                <div className="card-title">Distribusi Hasil</div>
+                            </div>
+                            <div className="card-body" style={{padding: '11px 0 8px'}}>
+                                <table className="req-table">
+                                    <thead>
+                                        <tr>
+                                            {/* <th>No</th> */}
+                                            <th>Nama Petugas</th>
+                                            <th>Tanggal Kirim</th>
+                                            <th>ke Dokter</th>
+                                            <th>ke Pasien</th>
+                                            <th>Metode</th>                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {Array.isArray(distribusi) && distribusi.map((item) => (
+                                            <tr key={item.id}>
+                                                {/* <td style={{fontSize: "11px"}}>{index + 1}</td> */}
+                                                <td>
+                                                    <div className="patient-info">
+                                                        <span className="patient-name">
+                                                            {item.petugas_lab?.nama_petugas}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td style={{fontSize: "11px"}}>
+                                                    {item.tanggal_kirim}
+                                                </td>
+                                                <td>
+                                                    <span className={`type-badge type-${
+                                                        item.dikirim_ke_dokter == 1 ? 'Done' : 'Nope'}`
+                                                    }>
+                                                        {item.dikirim_ke_dokter == 1 ? 'Done' : 'Nope'}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <span className={`type-badge type-${
+                                                        item.dikirim_ke_pasien == 1 ? 'Done' : 'Nope'}`
+                                                    }>
+                                                        {item.dikirim_ke_pasien == 1 ? 'Done' : 'Nope'}
+                                                    </span>
+                                                    </td>
+                                                <td style={{fontSize: "11px"}}>
+                                                    {item.metode_pengiriman}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </main>
         </div>
