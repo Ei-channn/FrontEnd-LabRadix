@@ -151,7 +151,7 @@ function Main() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await api.get("/users");
+                const response = await api.get("/userRole");
 
                 const data = response.data.data;
 

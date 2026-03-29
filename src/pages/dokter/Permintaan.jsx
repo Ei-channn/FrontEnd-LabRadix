@@ -1,6 +1,6 @@
-import Nav from "../components/Nav";
+import Nav from "../../components/Nav";
 import { useEffect, useState } from "react";
-import api from "../services/api";
+import api from "../../services/api";
 
 function Permintaan() {
 
@@ -17,6 +17,23 @@ function Permintaan() {
     const [tanggalPermintaan, setTanggalPermintaan] = useState(new Date().toISOString().split('T')[0]);
     const [statusPemeriksaan, setStatusPemeriksaan] = useState("antri");
     const [editId, setEditId] = useState(null);
+
+    const fetchData = async () => {
+        try {
+            const response = await api.get("/pasien");
+
+            const data = response.data?.data?.data || [];
+
+            setPasien(data);
+
+        } catch (error) {
+            console.log("Error fetch permintaan:", error);
+        }
+    };
+    
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -92,23 +109,6 @@ function Permintaan() {
                 const data = response.data?.data?.data || [];
 
                 setJenis(data);
-
-            } catch (error) {
-                console.log("Error fetch permintaan:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/pasien");
-
-                const data = response.data?.data?.data || [];
-
-                setPasien(data);
 
             } catch (error) {
                 console.log("Error fetch permintaan:", error);
@@ -258,7 +258,6 @@ function Permintaan() {
                             <h3>Form Permintaan Pemeriksaan</h3>
                             <form onSubmit={handleSubmit}>
                                 
-                                {/* INPUT NAMA PASIEN (DATALIST) */}
                                 <div style={{ marginBottom: '10px' }}>
                                     <label>Nama Pasien:</label>
                                     <input 
@@ -271,17 +270,10 @@ function Permintaan() {
                                     />
                                     <datalist id="list-pasien">
                                         {pasien.map((p) => (
-                                            <option key={p.id} value={p.nama_pasien}>
-                                                {/* NIK: {p.nik} */}
-                                            </option>
+                                            <option key={p.id} value={p.nama_pasien}></option>
                                         ))}
                                     </datalist>
-                                    <div style={{ fontSize: '12px', color: idPasien ? 'green' : 'red' }}>
-                                        {idPasien ? `ID Pasien Terpilih: ${idPasien}` : '⚠️ Nama harus sesuai daftar agar ID terbaca'}
-                                    </div>
                                 </div>
-
-                                {/* SELECT JENIS PEMERIKSAAN */}
                                 <div style={{ marginBottom: '10px' }}>
                                     <label>Jenis Pemeriksaan:</label>
                                     <select value={idJenis} onChange={(e) => setIdJenis(e.target.value)} required>
@@ -291,8 +283,6 @@ function Permintaan() {
                                         ))}
                                     </select>
                                 </div>
-
-                                {/* INPUT TANGGAL */}
                                 <div style={{ marginBottom: '10px' }}>
                                     <label>Tanggal Permintaan:</label>
                                     <input 
@@ -302,8 +292,6 @@ function Permintaan() {
                                         required 
                                     />
                                 </div>
-
-                                {/* SELECT STATUS */}
                                 <div style={{ marginBottom: '10px' }}>
                                     <label>Status:</label>
                                     <select value={statusPemeriksaan} onChange={(e) => setStatusPemeriksaan(e.target.value)}>
@@ -312,7 +300,6 @@ function Permintaan() {
                                         <option value="selesai">Selesai</option>
                                     </select>
                                 </div>
-
                                 <button type="submit">
                                     {editId ? "Update Data" : "Simpan Data"}
                                 </button>

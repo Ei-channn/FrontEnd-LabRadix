@@ -2,8 +2,12 @@ import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from "react-router";
 import './App.css'
 import Dashboard from "./pages/Dashboard";
-import Permintaan from "./pages/Permintaan";
+import Permintaan from "./pages/dokter/Permintaan";
+import Pasien from "./pages/admin/Pasien";
+import JenisPemeriksaan from "./pages/admin//JenisPemeriksaan";
+import Parameter from './pages/admin/Parameter';
 import Login from "./pages/Auth/login";
+import User from './pages/admin/User';
 
 function App() {
   return (
@@ -11,6 +15,10 @@ function App() {
       <Route path="/login" element={<Login />}/>
       <Route path="/dashboard" element={<Dashboard />}/>
       <Route path="/permintaan" element={<Permintaan />}/>
+      <Route path="/pasien" element={<Pasien />}/>
+      <Route path="/jenis" element={<JenisPemeriksaan />}/>
+      <Route path="/parameter" element={<Parameter />}/>
+      <Route path="/users" element={<User />}/>
     </Routes>
   )
 }

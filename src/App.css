@@ -604,3 +604,23 @@
   ::-webkit-scrollbar { width: 5px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--navy-light); border-radius: 3px; }
+
+.btttn {
+    display: flex;
+    gap: 10px;
+}
+
+  .btttn .btn-delete, .btn-edit {
+    border: none;
+    cursor: pointer;
+}
+
+.btttn .btn-edit {
+  background: transparent;
+  color: var(--accent)
+}
+
+.btttn .btn-delete {
+  color: var(--rose);
+  background: transparent;
+}

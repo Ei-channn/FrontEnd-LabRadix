@@ -7,7 +7,7 @@ function Nav() {
 
     console.log("TOKEN:", localStorage.getItem("token"));
 
-    const [user, setUser] = useState([]);
+    const [user, setUser] = useState({});
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -57,31 +57,30 @@ function Nav() {
 
                     {user.role === 'admin' && (
                         <>
-                            <a className="nav-item" href="#">Input User</a>
-                            <a className="nav-item" href="#">Input Pasien</a>
+                            <div className="nav-label">Management</div>
+                            <Link to="/users"><p className="nav-item">Users</p></Link>
+                            <Link to="/pasien"><p className="nav-item">Pasien</p></Link>
+                            <Link to="/spesialis"><p className="nav-item">Spesialis</p></Link>
+                            <Link to="/dokter"><p className="nav-item">Spesialis Dr.</p></Link>
+                            <Link to="/jenis"><p className="nav-item">Jenis Pemeriksaan</p></Link>
+                            <Link to="/parameter"><p className="nav-item">Parameter Jenis</p></Link>
                         </>
                     )}
 
                     <div className="nav-label">Hasil & Laporan</div>
                     {user?.role === 'petugas_lab' && (
                         <>
-                            <a className="nav-item" href="#">Input Hasil</a>
-                            <a className="nav-item" href="#">Distribusi</a>
+                            <Link to="/hasil"><p className="nav-item">Input Hasil</p></Link>
+                            <Link to="/distribusi"><p className="nav-item">Distribusi</p></Link>
                         </>
                     ) }
                     {user.role === 'dokter' && (
-                        <a className="nav-item" href="#">Nilai Kritis</a>
-                    )}
-                    {user.role === 'admin' && (
-                        <>
-                            <a className="nav-item" href="#">Jenis Pemeriksaan</a>
-                            <a className="nav-item" href="#">Parameter Pemeriksaan</a>
-                        </>
+                        <Link to="/kritis"><p className="nav-item">Nilai Kritis</p></Link>
                     )}
                     <a className="nav-item" href="#">Arsip</a>
 
                     <div className="nav-label">Pengaturan</div>
-                    <a className="nav-item" href="#">Settings</a>
+                    <Link to="/setting"><p className="nav-item">Pengaturan</p></Link>
                 </nav>
                 <div className="sidebar-footer">
                     <div className="user-avatar">{user?.role == 'dokter' ? 'DR' : 
