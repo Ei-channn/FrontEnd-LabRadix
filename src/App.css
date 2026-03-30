@@ -327,23 +327,25 @@
 
   .stat-delta.down { color: var(--rose); }
 
-  .grid-2 {
+  .grid-3 {
     display: grid;
-    grid-template-columns: 1fr 310px;
+    grid-template-columns: repeat(2 1fr);
     gap: 20px;
     margin-bottom: 20px;
   }
-
-  .grid-3 {
+  
+  .grid-2 {
     display: grid;
-    grid-template-columns: repeat(1, 1fr);
+    grid-template-columns: 1fr 350px;
     gap: 20px;
+    margin-bottom: 20px;
   }
-
+  
   .grid-4 {
     display: grid;
     grid-template-columns: 330px 1fr;
     gap: 20px;
+    margin-bottom: 20px;
   }
 
   .grid-5 {

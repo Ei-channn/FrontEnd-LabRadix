@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 function Nav() {
 
-    console.log("TOKEN:", localStorage.getItem("token"));
+    console.log("TOKEN:", localStorage.getItem("token"));    
 
     const [user, setUser] = useState({});
     const navigate = useNavigate();
@@ -61,13 +61,15 @@ function Nav() {
                             <Link to="/users"><p className="nav-item">Users</p></Link>
                             <Link to="/pasien"><p className="nav-item">Pasien</p></Link>
                             <Link to="/spesialis"><p className="nav-item">Spesialis</p></Link>
-                            <Link to="/dokter"><p className="nav-item">Spesialis Dr.</p></Link>
+                            <Link to="/dokter"><p className="nav-item">Dokter</p></Link>
                             <Link to="/jenis"><p className="nav-item">Jenis Pemeriksaan</p></Link>
                             <Link to="/parameter"><p className="nav-item">Parameter Jenis</p></Link>
                         </>
                     )}
 
-                    <div className="nav-label">Hasil & Laporan</div>
+                    {(user.role === 'dokter' || user.role === 'petugas_lab') && (
+                        <div className="nav-label">Hasil & Laporan</div>
+                    )}
                     {user?.role === 'petugas_lab' && (
                         <>
                             <Link to="/hasil"><p className="nav-item">Input Hasil</p></Link>
@@ -77,7 +79,6 @@ function Nav() {
                     {user.role === 'dokter' && (
                         <Link to="/kritis"><p className="nav-item">Nilai Kritis</p></Link>
                     )}
-                    <a className="nav-item" href="#">Arsip</a>
 
                     <div className="nav-label">Pengaturan</div>
                     <Link to="/setting"><p className="nav-item">Pengaturan</p></Link>
