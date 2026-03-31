@@ -20,11 +20,28 @@ function Permintaan() {
 
     const fetchData = async () => {
         try {
-            const response = await api.get("/pasien");
+            const [
+                resPermintaan,
+                resPasien,
+                resStatistik,
+                resUser,
+                resLaporan,
+                resJenis,
+            ] = await Promise.all([
+                    api.get("/permintaan"),
+                    api.get("/pasien"),
+                    api.get("/statistik"),
+                    api.get("/user"),
+                    api.get("/laporan"),
+                    api.get("/jenis"),
+                ]);
 
-            const data = response.data?.data?.data || [];
-
-            setPasien(data);
+            setPermintaan(resPermintaan.data?.data?.data || []);
+            setPasien(resPasien.data?.data?.data || []);
+            setTotalPermintaan(resStatistik.data.data.total_permintaan);
+            setUser(resUser?.data);
+            setLaporan(resLaporan?.data);
+            setJenis(resJenis.data?.data?.data || []);
 
         } catch (error) {
             console.log("Error fetch permintaan:", error);
@@ -32,89 +49,6 @@ function Permintaan() {
     };
     
     useEffect(() => {
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("laporan");
-
-                const data = response.data;
-
-                setLaporan(data);
-
-            } catch (error) {
-                console.log("Error fetch permintaan:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/permintaan");
-
-                const data = response.data?.data?.data || [];
-
-                setPermintaan(data);
-
-            } catch (error) {
-                console.log("Error fetch permintaan:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/user");
-
-                const data = response.data;
-
-                setUser(data);
-
-            } catch (error) {
-                console.log("Error fetch permintaan:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/statistik");
-
-                setTotalPermintaan(response.data.data.total_permintaan);
-
-            } catch (error) {
-                console.log("Error fetch hasil:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/jenis");
-
-                const data = response.data?.data?.data || [];
-
-                setJenis(data);
-
-            } catch (error) {
-                console.log("Error fetch permintaan:", error);
-            }
-        };
-
         fetchData();
     }, []);
 
@@ -181,7 +115,7 @@ function Permintaan() {
                     <div className="container-permintaan">
                         <div className="grid-5">
                             <div className="stat-card c1">
-                                <div className="stat-value">{laporan.permintaan_harian}</div>
+                                <div className="stat-value">{laporan.permintaan_harian || '0'}</div>
                                 <div className="stat-label">Permintaan Harian</div>
                             </div>
                             <div className="stat-card c2">

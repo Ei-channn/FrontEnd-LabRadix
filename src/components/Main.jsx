@@ -9,9 +9,9 @@ function Main() {
     const [pasien, setPasien] = useState([]);
     const [hasil, setHasil] = useState([]);
     const [status, setStatus] = useState([]);
-    const [kritis, setKritis] = useState([]);
+    const [kritis, setKritis] = useState(0);
     const [distribusi, setDistribusi] = useState([]);
-    const [user, setUser] = useState([]);
+    const [user, setUser] = useState({});
     const [users, setUsers] = useState([]);
     const [laporan, setLaporan] = useState([]);
     const [parameter, setParameter] = useState([]);
@@ -20,203 +20,63 @@ function Main() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await api.get("/permintaan");
+                const [
+                    resPermintaan,
+                    resPasien,
+                    resHasil,
+                    resStatus,
+                    resStatusKritis,
+                    resStatistik,
+                    resUser,
+                    resUserRole,
+                    resLaporan,
+                    resParameter,
+                    resJenis,
+                    resDistribusi
+                ] = await Promise.all([
+                        api.get("/permintaan"),
+                        api.get("/pasien"),
+                        api.get("/hasil"),
+                        api.get("/status"),
+                        api.get("/statusKritis"),
+                        api.get("/statistik"),
+                        api.get("/user"),
+                        api.get("/userRole"),
+                        api.get("/laporan"),
+                        api.get("/parameter"),
+                        api.get("/jenis"),
+                        api.get("/distribusi")
+                    ]);
 
-                const data = response.data?.data?.data || [];
+                // const data = response.data?.data?.data || [];
 
-                setPermintaan(data);
+                setPermintaan(resPermintaan.data?.data?.data || []);
+                setPasien(resPasien.data?.data?.data || []);
+                setHasil(resHasil.data?.data?.[0]?.data || []);
+                setStatus(resStatus?.data);
+                setKritis(resStatusKritis?.data?.data);
+                setTotalPermintaan(resStatistik.data.data.total_permintaan);
+                setKategori(resStatistik.data.data.per_kategori);
+                setDistribusi(resDistribusi.data?.data?.data || []);
+                setUser(resUser?.data);
+                setUsers(resUserRole?.data?.data);
+                setLaporan(resLaporan?.data);
+                setParameter(resParameter.data?.data?.data || []);
+                setJenis(resJenis.data?.data?.data || []);
 
             } catch (error) {
-                console.log("Error fetch permintaan:", error);
+                console.log("Error fetch :", error);
             }
         };
 
         fetchData();
     }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/pasien");
-
-                const data = response.data?.data?.data || [];
-
-                setPasien(data);
-
-            } catch (error) {
-                console.log("Error fetch permintaan:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/hasil");
-
-                const data = response.data?.data?.[0]?.data || [];
-
-                setHasil(data);
-
-            } catch (error) {
-                console.log("Error fetch hasil:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/status");
-
-                setStatus(response.data);
-
-            } catch (error) {
-                console.log("Error fetch hasil:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/statusKritis");
-
-                setKritis(response.data.data);
-
-            } catch (error) {
-                console.log("Error fetch hasil:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/statistik");
-
-                setTotalPermintaan(response.data.data.total_permintaan);
-                setKategori(response.data.data.per_kategori);
-
-            } catch (error) {
-                console.log("Error fetch hasil:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/distribusi");
-
-                const data = response.data?.data?.data || [];
-
-                setDistribusi(data);
-
-            } catch (error) {
-                console.log("Error fetch permintaan:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/user");
-
-                const data = response.data;
-
-                setUser(data);
-
-            } catch (error) {
-                console.log("Error fetch permintaan:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-    
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/userRole");
-
-                const data = response.data.data;
-
-                setUsers(data);
-
-            } catch (error) {
-                console.log("Error fetch permintaan:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("laporan");
-
-                const data = response.data;
-
-                setLaporan(data);
-
-            } catch (error) {
-                console.log("Error fetch permintaan:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/parameter");
-
-                const data = response.data?.data?.data || [];
-
-                setParameter(data);
-
-            } catch (error) {
-                console.log("Error fetch permintaan:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/jenis");
-
-                const data = response.data?.data?.data || [];
-
-                setJenis(data);
-
-            } catch (error) {
-                console.log("Error fetch permintaan:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    // console.log(pasien)
+    const today = new Date().toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    });
 
     return (
         <div>
@@ -227,7 +87,7 @@ function Main() {
                         Welcome {user?.name}
                     </div>
                     <div className="topbar-right">
-                        <button className="topbar-btn">Hari Ini — 13 Mar 2026</button>
+                        <button className="topbar-btn">Hari Ini — {today}</button>
                         <button className="topbar-btn">Notifikasi</button>
                         {user?.role === "dokter" && (
                             <button className="topbar-btn primary">+ Permintaan Baru</button>
@@ -370,7 +230,7 @@ function Main() {
                                                     </td>
                                                     <td style=
                                                         {{fontSize: "11px", color: '#8fa3bd'}}>
-                                                        {item.dokter?.nama_dokter}
+                                                        {item.dokter?.user?.name}
                                                     </td>
                                                     <td><span className={
                                                         `status-badge status-${

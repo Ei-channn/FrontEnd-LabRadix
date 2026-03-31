@@ -116,6 +116,7 @@ function Parameter() {
             }
 
             setNamaParameter("");
+            setNamaJenis("");
             setIdJenis("");
             setNormalMin("");
             setNormalMax("");
@@ -232,13 +233,15 @@ function Parameter() {
                                                     }}>
                                                         {item.satuan}
                                                     </td>
-                                                    <td className="btttn">
-                                                        <button className="btn-edit" onClick={() => handleEdit(item)}>
-                                                            Edit
-                                                        </button>
-                                                        <button className="btn-delete"onClick={() => handleDelete(item.id)}>
-                                                            Delete
-                                                        </button>
+                                                    <td>
+                                                        <div className="btttn">
+                                                            <button className="btn-edit" onClick={() => handleEdit(item)}>
+                                                                Edit
+                                                            </button>
+                                                            <button className="btn-delete"onClick={() => handleDelete(item.id)}>
+                                                                Delete
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             ))}

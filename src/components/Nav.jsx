@@ -67,17 +67,14 @@ function Nav() {
                         </>
                     )}
 
-                    {(user.role === 'dokter' || user.role === 'petugas_lab') && (
+                    {user.role === 'petugas_lab' && (
                         <div className="nav-label">Hasil & Laporan</div>
                     )}
                     {user?.role === 'petugas_lab' && (
                         <>
-                            <Link to="/hasil"><p className="nav-item">Input Hasil</p></Link>
+                            <Link to="/input-hasil"><p className="nav-item">Input Hasil</p></Link>
                             <Link to="/distribusi"><p className="nav-item">Distribusi</p></Link>
                         </>
-                    ) }
-                    {user.role === 'dokter' && (
-                        <Link to="/kritis"><p className="nav-item">Nilai Kritis</p></Link>
                     )}
 
                     <div className="nav-label">Pengaturan</div>
