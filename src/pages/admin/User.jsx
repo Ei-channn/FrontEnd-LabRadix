@@ -202,11 +202,11 @@ function User() {
                         </div>
                     </div>
                     <div className="container-form">
-                        <div style={{ padding: '20px' }}>
+                        <div>
                             <h3>Form Permintaan Pemeriksaan</h3>
                             <form onSubmit={handleSubmit}>
                                 
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Nama :</label>
                                     <input 
                                         type="text" 
@@ -216,7 +216,7 @@ function User() {
                                         required
                                     />
                                 </div>
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Email :</label>
                                     <input 
                                         type="email" 
@@ -225,7 +225,7 @@ function User() {
                                         required 
                                     />
                                 </div>
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Password :</label>
                                     <input 
                                         type="text" 
@@ -235,7 +235,7 @@ function User() {
                                         required
                                     />
                                 </div>
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Role :</label>
                                     <select 
                                         value={role} 
@@ -247,7 +247,7 @@ function User() {
                                         <option value="petugas_lab">Petugas Lab</option>
                                     </select>
                                 </div>
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>No Telp :</label>
                                     <input 
                                         type="number" 

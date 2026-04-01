@@ -252,11 +252,11 @@ function Parameter() {
                         </div>
                     </div>
                     <div className="container-form">
-                        <div style={{ padding: '20px' }}>
+                        <div>
                             <h3>Form Permintaan Pemeriksaan</h3>
                             <form onSubmit={handleSubmit}>
                                 
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Nama Parameter :</label>
                                     <input 
                                         type="text" 
@@ -266,7 +266,7 @@ function Parameter() {
                                         required
                                     />
                                 </div>
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Nama Jenis:</label>
                                     <input 
                                         type="text" 
@@ -282,7 +282,7 @@ function Parameter() {
                                         ))}
                                     </datalist>
                                 </div>
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Normal Min :</label>
                                     <input 
                                         type="number" 
@@ -291,7 +291,7 @@ function Parameter() {
                                         required
                                     />
                                 </div>
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Normal Max :</label>
                                     <input 
                                         type="number" 
@@ -300,7 +300,7 @@ function Parameter() {
                                         required
                                     />
                                 </div>
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Satuan :</label>
                                     <input 
                                         type="text" 

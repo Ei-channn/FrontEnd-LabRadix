@@ -4,10 +4,10 @@ import api from "../../services/api";
 
 function Permintaan() {
 
-    const [laporan, setLaporan] = useState([]);
+    const [laporan, setLaporan] = useState({});
     const [permintaan, setPermintaan] = useState([]);
-    const [user, setUser] = useState([]);
-    const [totalPermintaan, setTotalPermintaan] = useState([]);
+    const [user, setUser] = useState({});
+    const [totalPermintaan, setTotalPermintaan] = useState(0);
     const [jenis, setJenis] = useState([]);
     const [pasien, setPasien] = useState([]);
 
@@ -28,26 +28,26 @@ function Permintaan() {
                 resLaporan,
                 resJenis,
             ] = await Promise.all([
-                    api.get("/permintaan"),
-                    api.get("/pasien"),
-                    api.get("/statistik"),
-                    api.get("/user"),
-                    api.get("/laporan"),
-                    api.get("/jenis"),
-                ]);
-
-            setPermintaan(resPermintaan.data?.data?.data || []);
-            setPasien(resPasien.data?.data?.data || []);
-            setTotalPermintaan(resStatistik.data.data.total_permintaan);
-            setUser(resUser?.data);
-            setLaporan(resLaporan?.data);
-            setJenis(resJenis.data?.data?.data || []);
+                api.get("/permintaan").catch(() => []),
+                api.get("/pasien").catch(() => []),
+                api.get("/statistik").catch(() => []),
+                api.get("/user").catch(() => []),
+                api.get("/laporan").catch(() => []),
+                api.get("/jenis").catch(() => []),
+            ]);
+            
+            setPermintaan(resPermintaan.data?.data?.data ?? []);
+            setPasien(resPasien.data?.data?.data ?? []);
+            setTotalPermintaan(resStatistik.data?.data?.total_permintaan ?? 0);
+            setUser(resUser?.data ?? {});
+            setLaporan(resLaporan?.data ?? {});
+            setJenis(resJenis.data?.data?.data ?? []);
 
         } catch (error) {
-            console.log("Error fetch permintaan:", error);
+            console.error("Error fetch data:", error);
         }
     };
-    
+
     useEffect(() => {
         fetchData();
     }, []);
@@ -119,7 +119,7 @@ function Permintaan() {
                                 <div className="stat-label">Permintaan Harian</div>
                             </div>
                             <div className="stat-card c2">
-                                <div className="stat-value">{totalPermintaan}</div>
+                                <div className="stat-value">{totalPermintaan || '0'}</div>
                                 <div className="stat-label">Total Permintaan</div>
                             </div>
                         </div>
@@ -168,7 +168,7 @@ function Permintaan() {
                                                             </td>
                                                             <td style=
                                                                 {{fontSize: "11px", color: '#8fa3bd'}}>
-                                                                {item.dokter?.nama_dokter}
+                                                                {item?.dokter?.user?.name}
                                                             </td>
                                                             <td><span className={
                                                                 `status-badge status-${
@@ -188,11 +188,11 @@ function Permintaan() {
                         </div>
                     </div>
                     <div className="container-form">
-                        <div style={{ padding: '20px' }}>
+                        <div>
                             <h3>Form Permintaan Pemeriksaan</h3>
                             <form onSubmit={handleSubmit}>
                                 
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Nama Pasien:</label>
                                     <input 
                                         type="text" 
@@ -208,7 +208,7 @@ function Permintaan() {
                                         ))}
                                     </datalist>
                                 </div>
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Jenis Pemeriksaan:</label>
                                     <select value={idJenis} onChange={(e) => setIdJenis(e.target.value)} required>
                                         <option value="">-- Pilih Jenis --</option>
@@ -217,7 +217,7 @@ function Permintaan() {
                                         ))}
                                     </select>
                                 </div>
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Tanggal Permintaan:</label>
                                     <input 
                                         type="date" 
@@ -226,7 +226,7 @@ function Permintaan() {
                                         required 
                                     />
                                 </div>
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Status:</label>
                                     <select value={statusPemeriksaan} onChange={(e) => setStatusPemeriksaan(e.target.value)}>
                                         <option value="antri">Antri</option>
@@ -234,7 +234,7 @@ function Permintaan() {
                                         <option value="selesai">Selesai</option>
                                     </select>
                                 </div>
-                                <button type="submit">
+                                <button type="submit" className="bttn">
                                     {editId ? "Update Data" : "Simpan Data"}
                                 </button>
                             </form>

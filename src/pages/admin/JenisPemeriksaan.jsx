@@ -185,11 +185,11 @@ function JenisPemeriksaan() {
                         </div>
                     </div>
                     <div className="container-form">
-                        <div style={{ padding: '20px' }}>
+                        <div>
                             <h3>Form Permintaan Pemeriksaan</h3>
                             <form onSubmit={handleSubmit}>
                                 
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Nama Jenis Pemeriksaan :</label>
                                     <input 
                                         type="text" 
@@ -199,7 +199,7 @@ function JenisPemeriksaan() {
                                         required
                                     />
                                 </div>
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Kategori :</label>
                                     <select 
                                         value={kategori} 

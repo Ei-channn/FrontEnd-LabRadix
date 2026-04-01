@@ -179,11 +179,11 @@ function Spesialis() {
                         </div>
                     </div>
                     <div className="container-form">
-                        <div style={{ padding: '20px' }}>
+                        <div>
                             <h3>Form Permintaan Pemeriksaan</h3>
                             <form onSubmit={handleSubmit}>
                                 
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Nama Spesialis :</label>
                                     <input 
                                         type="text" 
@@ -191,7 +191,7 @@ function Spesialis() {
                                         onChange={(e) => setNamaSpesialis(e.target.value)}
                                         placeholder="Ketik nama Spesialis..."
                                         required
-                                    />
+                                    /><hr />
                                 </div>
                                 <button type="submit" className="bttn">
                                     {editId ? "Update" : "Tambah"}

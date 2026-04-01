@@ -1,10 +1,14 @@
 import Nav from "../../components/Nav";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
+import { UNSAFE_getTurboStreamSingleFetchDataStrategy } from "react-router-dom";
 
 function Pasien() {
 
     const [pasien, setPasien] = useState([]);
+    const [totalPasien, setTotalPasien] = useState([]);
+    const [page, setPage] = useState(1);
+    const [lastPage, setLastPage] = useState(1);
     const [user, setUser] = useState([]);
     const [laporan, setLaporan] = useState([]);
     const [editId, setEditId] = useState(null); 
@@ -14,20 +18,22 @@ function Pasien() {
     const [jenisKelamin, setJenisKelamin] = useState("");
     const [alamat, setAlamat] = useState("");
     const [noTelp, setNoTelp] = useState("");
+    const [chatId, setChatId] = useState("");
 
-    const fetchData = async () => {
+    const fetchData = async (pageNum = 1) => {
         try {
-            const response = await api.get("/pasien");
-            const data = response.data?.data?.data || [];
-            setPasien(data);
+            const response = await api.get(`/pasien?page=${pageNum}`);
+            setPasien(response.data?.data?.data || []);
+            setLastPage(response.data?.data?.last_page);
+            setTotalPasien(response.data?.data?.total);
         } catch (error) {
             console.log("Error fetch pasien:", error);
         }
     };
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        fetchData(page);
+    }, [page]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -73,6 +79,7 @@ function Pasien() {
                 jenis_kelamin: jenisKelamin,
                 alamat: alamat,
                 no_telp: noTelp,
+                telegram_chat_id: chatId,
             };
 
             if (editId) {
@@ -86,6 +93,7 @@ function Pasien() {
             setJenisKelamin("");
             setAlamat("");
             setNoTelp("");
+            setChatId("");
             setEditId(null);
 
             alert("Data berhasil disimpan!");
@@ -200,13 +208,44 @@ function Pasien() {
                                 </div>
                             </div>
                         </div>
+                        {totalPasien > 10 && (
+                            <div style={{ marginTop: "10px" }}>
+                                <button
+                                    disabled={page === 1}
+                                    onClick={() => setPage(page - 1)}
+                                    >
+                                    Prev
+                                </button>
+
+                                {[...Array(lastPage)].map((_, i) => (
+                                    <button
+                                    key={i}
+                                    onClick={() => setPage(i + 1)}
+                                    style={{
+                                        fontWeight: page === i + 1 ? "bold" : "normal",
+                                        margin: "0 3px"
+                                    }}
+                                    >
+                                        {i + 1}
+                                    </button>
+                                ))}
+
+                                <button
+                                    disabled={page === lastPage}
+                                    onClick={() => setPage(page + 1)}
+                                    >
+                                    Next
+                                </button>
+
+                            </div>
+                        )}
                     </div>
                     <div className="container-form">
-                        <div style={{ padding: '20px' }}>
+                        <div>
                             <h3>Form Permintaan Pemeriksaan</h3>
                             <form onSubmit={handleSubmit}>
                                 
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Nama Pasien :</label>
                                     <input 
                                         type="text" 
@@ -216,7 +255,7 @@ function Pasien() {
                                         required
                                     />
                                 </div>
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Tanggal Lahir :</label>
                                     <input 
                                         type="date" 
@@ -225,7 +264,7 @@ function Pasien() {
                                         required 
                                     />
                                 </div>
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Jenis Kelamin :</label>
                                     <select 
                                         value={jenisKelamin} 
@@ -237,7 +276,7 @@ function Pasien() {
                                         <option value="perempuan">Perempuan</option>
                                     </select>
                                 </div>
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Alamat :</label>
                                     <input 
                                         type="text" 
@@ -247,12 +286,21 @@ function Pasien() {
                                         required
                                     />
                                 </div>
-                                <div style={{ marginBottom: '10px' }}>
+                                <div style={{ marginBottom: '10px' }} className="form">
                                     <label>No Telp :</label>
                                     <input 
                                         type="number" 
                                         value={noTelp}
                                         onChange={(e) => setNoTelp(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div style={{ marginBottom: '10px' }} className="form">
+                                    <label>Chat ID :</label>
+                                    <input 
+                                        type="number" 
+                                        value={chatId}
+                                        onChange={(e) => setChatId(e.target.value)}
                                         required
                                     />
                                 </div>

@@ -11,6 +11,7 @@ import Dokter from './pages/admin/dokter';
 import Login from "./pages/Auth/login";
 import User from './pages/admin/User';
 import InputHasil from './pages/petugas-lab/inputHasil';
+import Distribusi from './pages/petugas-lab/Distribusi';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
       <Route path="/dokter" element={<Dokter />}/>
       <Route path="/users" element={<User />}/>
       <Route path="/input-hasil" element={<InputHasil />}/>
+      <Route path="/distribusi" element={<Distribusi />}/>
     </Routes>
   )
 }

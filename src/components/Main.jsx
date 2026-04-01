@@ -34,18 +34,18 @@ function Main() {
                     resJenis,
                     resDistribusi
                 ] = await Promise.all([
-                        api.get("/permintaan"),
-                        api.get("/pasien"),
-                        api.get("/hasil"),
-                        api.get("/status"),
-                        api.get("/statusKritis"),
-                        api.get("/statistik"),
-                        api.get("/user"),
-                        api.get("/userRole"),
-                        api.get("/laporan"),
-                        api.get("/parameter"),
-                        api.get("/jenis"),
-                        api.get("/distribusi")
+                        api.get("/permintaan").catch(() => []),
+                        api.get("/pasien").catch(() => []),
+                        api.get("/hasil").catch(() => []),
+                        api.get("/status").catch(() => []),
+                        api.get("/statusKritis").catch(() => []),
+                        api.get("/statistik").catch(() => []),
+                        api.get("/user").catch(() => []),
+                        api.get("/userRole").catch(() => []),
+                        api.get("/laporan").catch(() => []),
+                        api.get("/parameter").catch(() => []),
+                        api.get("/jenis").catch(() => []),
+                        api.get("/distribusi").catch(() => [])
                     ]);
 
                 // const data = response.data?.data?.data || [];
@@ -201,6 +201,7 @@ function Main() {
                                     <>
                                         <thead>
                                             <tr>
+                                                <th>No Perm</th>
                                                 <th>Pasien</th>
                                                 <th>Jenis</th>
                                                 <th>Pemeriksaan</th>
@@ -209,8 +210,13 @@ function Main() {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {Array.isArray(permintaan) && permintaan.map((item) => (
+                                            {Array.isArray(permintaan) && permintaan.
+                                                filter(u => u.status_pemeriksaan != "arsip").
+                                                map((item) => (
                                                 <tr key={item.id}>
+                                                    <td style={{fontSize: "11px"}}>
+                                                        {item.no_permintaan}
+                                                    </td>
                                                     <td>
                                                         <div className="patient-info">
                                                             <span className="patient-name">
@@ -539,9 +545,9 @@ function Main() {
                                     <thead>
                                         <tr>
                                             {/* <th>No</th> */}
-                                            <th>Nama Petugas</th>
+                                            <th>Petugas</th>
+                                            <th>no Perm</th>
                                             <th>Tanggal Kirim</th>
-                                            <th>ke Dokter</th>
                                             <th>ke Pasien</th>
                                             <th>Metode</th>                                            
                                         </tr>
@@ -553,19 +559,15 @@ function Main() {
                                                 <td>
                                                     <div className="patient-info">
                                                         <span className="patient-name">
-                                                            {item.petugas_lab?.nama_petugas}
+                                                            {item?.user?.name}
                                                         </span>
                                                     </div>
                                                 </td>
                                                 <td style={{fontSize: "11px"}}>
-                                                    {item.tanggal_kirim}
+                                                    {item?.permintaan_pemeriksaan?.no_permintaan}
                                                 </td>
-                                                <td>
-                                                    <span className={`type-badge type-${
-                                                        item.dikirim_ke_dokter == 1 ? 'Done' : 'Nope'}`
-                                                    }>
-                                                        {item.dikirim_ke_dokter == 1 ? 'Done' : 'Nope'}
-                                                    </span>
+                                                <td style={{fontSize: "11px"}}>
+                                                    {item.tanggal_kirim}
                                                 </td>
                                                 <td>
                                                     <span className={`type-badge type-${

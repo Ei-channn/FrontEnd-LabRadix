@@ -16,9 +16,9 @@ function InputHasil() {
     
     const fetchData = async () => {
         try {
-            const resPermintaan = await api.get("/permintaan");
+            const resPermintaan = await api.get("/permintaan").catch(() => []);
             const resUser = await api.get("/user");
-            const resLaporan = await api.get("/laporan");
+            const resLaporan = await api.get("/laporan").catch(() => []);
             
             setPermintaan(resPermintaan.data?.data?.data || []);
             setUser(resUser.data || []);
@@ -138,7 +138,10 @@ function InputHasil() {
                                         </thead>
                                         <tbody>
                                             {Array.isArray(permintaan) && permintaan.
-                                                filter(u => u.status_pemeriksaan != "selesai").
+                                                filter(u => 
+                                                    u.status_pemeriksaan != "selesai" && 
+                                                    u.status_pemeriksaan != 'arsip'
+                                                ).
                                                 map((item) => (
                                                 <tr key={item.id} onClick={() => handleSelectPermintaan(item)}>
                                                     <td style={{fontSize: "11px"}}>
@@ -185,7 +188,7 @@ function InputHasil() {
                         </div>
                     </div>
                     <div className="container-form">
-                        <div style={{padding:"20px"}}>
+                        <div>
                             <h2>Input Hasil Pemeriksaan</h2>
                             {selectPermintaan && (
                                 <div className="info-permintaan">
@@ -198,17 +201,9 @@ function InputHasil() {
                             <form onSubmit={handleSubmit}>
                                 {parameter.length > 0 && (
                                     <div>
-                                        <h3>Parameter Pemeriksaan</h3>
+                                        <h3>Parameter Pemeriksaan</h3><br />
                                         {parameter.map((p) => (
-                                            <div
-                                                key={p.id}
-                                                style={{
-                                                    marginBottom:"10px",
-                                                    display:"flex",
-                                                    gap:"10px",
-                                                    alignItems:"center"
-                                                }}
-                                            >
+                                            <div key={p.id} className="form">
                                                 <label>
                                                     {p.nama_parameter}
                                                 </label>
@@ -220,16 +215,19 @@ function InputHasil() {
                                                     }
                                                     required
                                                 />
-                                                <span>{p.satuan}</span>
-                                                <p>
-                                                    normal: {p.nilai_normal_min +  ' - '  + p.nilai_normal_max}
-                                                </p>
+                                                <div className="container-text">
+                                                    <span className="satuan">{p.satuan}</span> 
+                                                    <p className="nilai-normal">:</p>
+                                                    <p className="nilai-normal">
+                                                        normal: {p.nilai_normal_min +  ' - '  + p.nilai_normal_max}
+                                                    </p>
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
                                 )}
                                 {parameter.length > 0 && (
-                                    <button type="submit" style={{marginTop:"20px"}}>
+                                    <button type="submit" className="bttn">
                                         Simpan Hasil
                                     </button>
                                 )}
