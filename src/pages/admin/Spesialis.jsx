@@ -5,26 +5,31 @@ import api from "../../services/api";
 function Spesialis() {
 
     const [spesialis, setSpesialis] = useState([]);
+    const [totalSpesialis, setTotalSpesialis] = useState(0);
+    const [page, setPage] = useState(1);
+    const [lastPage, setLastPage] = useState(1);
     const [user, setUser] = useState([]);
     const [laporan, setLaporan] = useState([]);
     const [editId, setEditId] = useState(null); 
 
     const [namaSpesialis, setNamaSpesialis] = useState("");
 
-    const fetchData = async () => {
+    const fetchData = async (pageNum) => {
         try {
-                const resSpesialis = await api.get("/spesialis");
+                const resSpesialis = await api.get(`/spesialis?page=${pageNum}`);
                 
                 setSpesialis(resSpesialis.data?.data?.data || []);
+                setLastPage(resSpesialis.data?.data?.last_page);
+                setTotalSpesialis(resSpesialis.data?.data?.total);
                 
-            } catch (error) {
-                console.log("Error fetch spesialis:", error);
-            }
-        };
+        } catch (error) {
+            console.log("Error fetch spesialis:", error);
+        }
+    };
         
     useEffect(() => {
-        fetchData();
-    }, []);
+        fetchData([page]);
+    }, [page]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -177,6 +182,34 @@ function Spesialis() {
                                 </div>
                             </div>
                         </div>
+                    {totalSpesialis > 10 && (
+                        <div style={{ marginTop: "10px" }}>
+                            <button
+                                disabled={page === 1}
+                                onClick={() => setPage(page - 1)}
+                                >
+                                Prev
+                            </button>
+                            {[...Array(lastPage)].map((_, i) => (
+                                <button
+                                key={i}
+                                onClick={() => setPage(i + 1)}
+                                style={{
+                                    fontWeight: page === i + 1 ? "bold" : "normal",
+                                    margin: "0 3px"
+                                }}
+                                >
+                                    {i + 1}
+                                </button>
+                            ))}
+                            <button
+                                disabled={page === lastPage}
+                                onClick={() => setPage(page + 1)}
+                                >
+                                Next
+                            </button>
+                        </div>
+                    )}
                     </div>
                     <div className="container-form">
                         <div>

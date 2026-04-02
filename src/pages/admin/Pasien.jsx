@@ -1,7 +1,6 @@
 import Nav from "../../components/Nav";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
-import { UNSAFE_getTurboStreamSingleFetchDataStrategy } from "react-router-dom";
 
 function Pasien() {
 

@@ -376,7 +376,6 @@ function Main() {
                                             <tr>
                                                 <th>No</th>
                                                 <th>Nama</th>
-                                                <th>Email</th>
                                                 <th>Role</th>
                                             </tr>
                                         </thead>
@@ -392,9 +391,6 @@ function Main() {
                                                                 {item.name}
                                                             </span>
                                                         </div>
-                                                    </td>
-                                                    <td style={{fontSize: "11px"}}>
-                                                        {item.email}
                                                     </td>
                                                     <td>
                                                         <span className={`type-badge type-${

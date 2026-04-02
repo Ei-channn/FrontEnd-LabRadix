@@ -5,6 +5,9 @@ import api from "../../services/api";
 function User() {
 
     const [users, setUsers] = useState([]);
+    const [totalUsers, setTotalUsers] = useState(0);
+    const [page, setPage] = useState(1);
+    const [lastPage, setLastPage] = useState(1);
     const [user, setUser] = useState([]);
     const [laporan, setLaporan] = useState([]);
     const [editId, setEditId] = useState(null); 
@@ -15,21 +18,22 @@ function User() {
     const [role, setRole] = useState("");
     const [noTelp, setNoTelp] = useState("");
 
-    const fetchData = async () => {
+    const fetchData = async (pageNum) => {
         try {
-            const response = await api.get("/userRole");
+            const response = await api.get(`/users?page=${pageNum}`);
 
-            const data = response.data.data || [];
+            setUsers(response.data?.data?.data || []);
+            setLastPage(response.data?.data?.last_page);
+            setTotalUsers(response.data?.data?.total);
 
-            setUsers(data);
         } catch (error) {
             console.log("Error fetch pasien:", error);
         }
     };
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        fetchData(page);
+    }, [page]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -116,8 +120,6 @@ function User() {
         }
     };
 
-    console.log(users)
-
     return (
         <div>
             <Nav />
@@ -166,7 +168,9 @@ function User() {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {Array.isArray(users) && users.map((item) => (
+                                            {Array.isArray(users) && users.
+                                                filter(u => u.role !== 'admin').
+                                                map((item) => (
                                                 <tr key={item.id}>
                                                     <td>
                                                         <div className="patient-info">
@@ -200,6 +204,34 @@ function User() {
                                 </div>
                             </div>
                         </div>
+                    {totalUsers > 10 && (
+                        <div style={{ marginTop: "10px" }}>
+                            <button
+                                disabled={page === 1}
+                                onClick={() => setPage(page - 1)}
+                                >
+                                Prev
+                            </button>
+                            {[...Array(lastPage)].map((_, i) => (
+                                <button
+                                key={i}
+                                onClick={() => setPage(i + 1)}
+                                style={{
+                                    fontWeight: page === i + 1 ? "bold" : "normal",
+                                    margin: "0 3px"
+                                }}
+                                >
+                                    {i + 1}
+                                </button>
+                            ))}
+                            <button
+                                disabled={page === lastPage}
+                                onClick={() => setPage(page + 1)}
+                                >
+                                Next
+                            </button>
+                        </div>
+                    )}
                     </div>
                     <div className="container-form">
                         <div>
@@ -242,7 +274,7 @@ function User() {
                                         onChange={(e) => setRole(e.target.value)} 
                                         required
                                     >
-                                        <option value="">-- Pilih Jenis Kelamin --</option>
+                                        <option value="">-- Pilih Role --</option>
                                         <option value="dokter">Dokter</option>
                                         <option value="petugas_lab">Petugas Lab</option>
                                     </select>

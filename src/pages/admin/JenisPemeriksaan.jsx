@@ -5,6 +5,9 @@ import api from "../../services/api";
 function JenisPemeriksaan() {
 
     const [jenis, setJenis] = useState([]);
+    const [totalJenis, setTotalJenis] = useState(0);
+    const [page, setPage] = useState(1);
+    const [lastPage, setLastPage] = useState(1);
     const [user, setUser] = useState([]);
     const [laporan, setLaporan] = useState([]);
     const [editId, setEditId] = useState(null); 
@@ -15,16 +18,17 @@ function JenisPemeriksaan() {
     const fetchData = async () => {
         try {
             const response = await api.get("/jenis");
-            const data = response.data?.data?.data || [];
-            setJenis(data);
+            setJenis(response.data?.data?.data || []);
+            setLastPage(response.data?.data?.last_page);
+            setTotalJenis(response.data?.data?.total);
         } catch (error) {
             console.log("Error fetch jenis:", error);
         }
     };
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        fetchData(page);
+    }, [page]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -183,6 +187,34 @@ function JenisPemeriksaan() {
                                 </div>
                             </div>
                         </div>
+                    {totalJenis > 10 && (
+                        <div style={{ marginTop: "10px" }}>
+                            <button
+                                disabled={page === 1}
+                                onClick={() => setPage(page - 1)}
+                                >
+                                Prev
+                            </button>
+                            {[...Array(lastPage)].map((_, i) => (
+                                <button
+                                key={i}
+                                onClick={() => setPage(i + 1)}
+                                style={{
+                                    fontWeight: page === i + 1 ? "bold" : "normal",
+                                    margin: "0 3px"
+                                }}
+                                >
+                                    {i + 1}
+                                </button>
+                            ))}
+                            <button
+                                disabled={page === lastPage}
+                                onClick={() => setPage(page + 1)}
+                                >
+                                Next
+                            </button>
+                        </div>
+                    )}
                     </div>
                     <div className="container-form">
                         <div>

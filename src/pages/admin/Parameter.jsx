@@ -5,6 +5,9 @@ import api from "../../services/api";
 function Parameter() {
 
     const [parameter, setParameter] = useState([]);
+    const [totalParameter, setTotalParameter] = useState(0);
+    const [page, setPage] = useState(1);
+    const [lastPage, setLastPage] = useState(1);
     const [jenis, setJenis] = useState([]);
     const [user, setUser] = useState([]);
     const [laporan, setLaporan] = useState([]);
@@ -17,22 +20,22 @@ function Parameter() {
     const [normalMax, setNormalMax] = useState("");
     const [satuan, setSatuan] = useState("");
 
-    const fetchData = async () => {
+    const fetchData = async (pageNum) => {
         try {
-                const response = await api.get("/parameter");
+            const response = await api.get(`/parameter?page=${pageNum}`);
                 
-                const data = response.data?.data?.data || [];
+            setParameter(response.data?.data?.data || []);
+            setLastPage(response.data?.data?.last_page);
+            setTotalParameter(response.data?.data?.total);
                 
-                setParameter(data);
-                
-            } catch (error) {
-                console.log("Error fetch parameter:", error);
-            }
-        };
+        } catch (error) {
+            console.log("Error fetch parameter:", error);
+        }
+    };
         
     useEffect(() => {
-        fetchData();
-    }, []);
+        fetchData(page);
+    }, [[page]]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -251,6 +254,34 @@ function Parameter() {
                             </div>
                         </div>
                     </div>
+                    {totalParameter > 10 && (
+                        <div style={{ marginTop: "10px" }}>
+                            <button
+                                disabled={page === 1}
+                                onClick={() => setPage(page - 1)}
+                            >
+                                Prev
+                            </button>
+                            {[...Array(lastPage)].map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => setPage(i + 1)}
+                                    style={{
+                                        fontWeight: page === i + 1 ? "bold" : "normal",
+                                        margin: "0 3px"
+                                    }}
+                                >
+                                    {i + 1}
+                                </button>
+                            ))}
+                            <button
+                                disabled={page === lastPage}
+                                onClick={() => setPage(page + 1)}
+                            >
+                                Next
+                            </button>
+                        </div>
+                    )}
                     <div className="container-form">
                         <div>
                             <h3>Form Permintaan Pemeriksaan</h3>
