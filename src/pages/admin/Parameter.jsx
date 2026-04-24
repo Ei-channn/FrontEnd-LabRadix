@@ -8,6 +8,8 @@ function Parameter() {
     const [totalParameter, setTotalParameter] = useState(0);
     const [page, setPage] = useState(1);
     const [lastPage, setLastPage] = useState(1);
+    const [pageJenis, setPageJenis] = useState(1);
+    const [lastPageJenis, setLastPageJenis] = useState(1);
     const [jenis, setJenis] = useState([]);
     const [user, setUser] = useState([]);
     const [laporan, setLaporan] = useState([]);
@@ -19,6 +21,9 @@ function Parameter() {
     const [normalMin, setNormalMin] = useState("");
     const [normalMax, setNormalMax] = useState("");
     const [satuan, setSatuan] = useState("");
+
+    const [showModal, setShowModal] = useState(false);
+    const [search, setSearch] = useState("");
 
     const fetchData = async (pageNum) => {
         try {
@@ -35,24 +40,23 @@ function Parameter() {
         
     useEffect(() => {
         fetchData(page);
-    }, [[page]]);
+    }, [page]);
 
+    const fetchDataJenis = async (pageNum) => {
+        try {
+            const response = await api.get(`/jenis?page=${pageNum}`);
+
+            setJenis(response.data?.data?.data || []);
+            setLastPageJenis(response.data?.data?.last_page);
+            
+        } catch (error) {
+            console.log("Error fetch jenis:", error);
+        }
+    };
+    
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/jenis");
-
-                const data = response.data?.data?.data || [];
-
-                setJenis(data);
-
-            } catch (error) {
-                console.log("Error fetch jenis:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
+        fetchDataJenis(pageJenis);
+    }, [pageJenis]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -144,13 +148,19 @@ function Parameter() {
     };
 
     const handleDelete = async (id) => {
-        try {
-            await api.delete(`/parameter/${id}`);
-            fetchData();
-        } catch (error) {
-            console.log(error);
+        if (window.confirm("Yakin ingin menghapus data ini?")) {
+            try {
+                await api.delete(`/parameter/${id}`);
+                fetchParameters(page);
+            } catch (error) {
+                console.error("Delete error:", error);
+            }
         }
     };
+
+    const filteredJenis = jenis.filter(j =>
+        j.nama_jenis.toLowerCase().includes(search.toLowerCase())
+    );
 
     return (
         <div>
@@ -253,35 +263,34 @@ function Parameter() {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    {totalParameter > 10 && (
-                        <div style={{ marginTop: "10px" }}>
-                            <button
-                                disabled={page === 1}
-                                onClick={() => setPage(page - 1)}
-                            >
-                                Prev
-                            </button>
-                            {[...Array(lastPage)].map((_, i) => (
+                        {totalParameter > 10 && (
+                            <div className="modal-pagination" style={{ marginTop: "10px" }}>
                                 <button
-                                    key={i}
-                                    onClick={() => setPage(i + 1)}
-                                    style={{
-                                        fontWeight: page === i + 1 ? "bold" : "normal",
-                                        margin: "0 3px"
-                                    }}
+                                    className="page-btn"
+                                    disabled={page === 1}
+                                    onClick={() => setPage(page - 1)}
                                 >
-                                    {i + 1}
+                                    Prev
                                 </button>
-                            ))}
-                            <button
-                                disabled={page === lastPage}
-                                onClick={() => setPage(page + 1)}
-                            >
-                                Next
-                            </button>
-                        </div>
-                    )}
+                                {[...Array(lastPage)].map((_, i) => (
+                                    <button
+                                        key={i}
+                                        className={`page-btn ${page === i + 1 ? "active" : ""}`}
+                                        onClick={() => setPage(i + 1)}
+                                    >
+                                        {i + 1}
+                                    </button>
+                                ))}
+                                <button
+                                    className="page-btn"
+                                    disabled={page === lastPage}
+                                    onClick={() => setPage(page + 1)}
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        )}
+                    </div>
                     <div className="container-form">
                         <div>
                             <h3>Form Permintaan Pemeriksaan</h3>
@@ -301,17 +310,13 @@ function Parameter() {
                                     <label>Nama Jenis:</label>
                                     <input 
                                         type="text" 
-                                        list="list-jenis"
                                         value={namaJenis}
+                                        onClick={() => setShowModal(true)}
                                         onChange={handleNamaJenisChange}
                                         placeholder="Ketik nama Jenis P..."
+                                        readOnly
                                         required
                                     />
-                                    <datalist id="list-jenis">
-                                        {jenis.map((p) => (
-                                            <option key={p.id} value={p.nama_jenis}></option>
-                                        ))}
-                                    </datalist>
                                 </div>
                                 <div style={{ marginBottom: '10px' }} className="form">
                                     <label>Normal Min :</label>
@@ -319,7 +324,9 @@ function Parameter() {
                                         type="number" 
                                         value={normalMin}
                                         onChange={(e) => setNormalMin(e.target.value)}
+                                        placeholder="0"
                                         required
+                                        min="0"
                                     />
                                 </div>
                                 <div style={{ marginBottom: '10px' }} className="form">
@@ -328,7 +335,9 @@ function Parameter() {
                                         type="number" 
                                         value={normalMax}
                                         onChange={(e) => setNormalMax(e.target.value)}
+                                        placeholder="0"
                                         required
+                                        min="0"
                                     />
                                 </div>
                                 <div style={{ marginBottom: '10px' }} className="form">
@@ -348,6 +357,74 @@ function Parameter() {
                         </div>
                     </div>
                 </div>
+                {showModal && (
+                    <div className="modal-overlay">
+                        <div className="modal">
+                            <h3>Pilih Jenis</h3>
+
+                            <input
+                                type="text"
+                                placeholder="Cari jenis..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+
+                            <div className="modal-body">
+                                {filteredJenis.length > 0 ? (
+                                    filteredJenis.map(item => (
+                                        <div
+                                            key={item.id}
+                                            className="modal-item"
+                                            onClick={() => {
+                                                setNamaJenis(item.nama_jenis);
+                                                setIdJenis(item.id);
+                                                setShowModal(false);
+                                                setSearch("");
+                                            }}
+                                        >
+                                            {item.nama_jenis}
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p style={{ color: 'var(--text-dim)', fontSize: '12px' }}>
+                                        Tidak ditemukan
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="modal-footer">
+                                <div className="modal-pagination" style={{ marginTop: "10px" }}>
+                                    <button
+                                        className="page-btn"
+                                        disabled={pageJenis === 1}
+                                        onClick={() => setPageJenis(pageJenis - 1)}
+                                    >
+                                        Prev
+                                    </button>
+                                    
+                                    {[...Array(lastPageJenis)].map((_, i) => (
+                                        <button
+                                            key={i}
+                                            className={`page-btn ${pageJenis === i + 1 ? "active" : ""}`}
+                                            onClick={() => setPageJenis(i + 1)}
+                                        >
+                                            {i + 1}
+                                        </button>
+                                    ))}
+
+                                    <button
+                                        className="page-btn"
+                                        disabled={pageJenis === lastPageJenis}
+                                        onClick={() => setPageJenis(pageJenis + 1)}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                                <button className="btn-tutup" onClick={() => setShowModal(false)}>Tutup</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </main>
         </div>
     )

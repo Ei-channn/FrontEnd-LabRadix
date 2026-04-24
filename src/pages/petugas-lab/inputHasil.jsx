@@ -208,7 +208,9 @@ function InputHasil() {
                                                     {p.nama_parameter}
                                                 </label>
                                                 <input
-                                                    type="text"
+                                                    type="number"
+                                                    min="0"
+                                                    placeholder="Masukkan hasil"
                                                     value={hasil[p.id] || ""}
                                                     onChange={(e) =>
                                                         handleInputHasil(p.id, e.target.value)

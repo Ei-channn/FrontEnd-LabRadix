@@ -36,7 +36,7 @@ function Login() {
 
       <div class="login-container">
         <div class="login-header">
-          <h1>Apotek Santi Medika</h1>
+          <h1>LabRadix</h1>
           <p>Silakan masuk ke akun Anda</p>
         </div>
         <form onSubmit={handleLogin} class="login-form" id="loginForm">

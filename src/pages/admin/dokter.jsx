@@ -9,18 +9,24 @@ function Dokter() {
     const [users, setUsers] = useState([]);
     const [laporan, setLaporan] = useState([]);
     const [editId, setEditId] = useState(null); 
+    
+    const [showModal, setShowModal] = useState(false);
+    const [pageSpesialis, setPageSpesialis] = useState(1);
+    const [lastPageSpesialis, setLastPageSpesialis] = useState(1);
+    const [search, setSearch] = useState("");
 
     const [namaSpesialis, setNamaSpesialis] = useState("");
     const [namaUser, setNamaUser] = useState("");
     const [idUser, setIdUser] = useState("");
     const [idSpesialis, setIdSpesialis] = useState("");
 
-    const fetchData = async () => {
+    const fetchData = async (pageSpesialis) => {
         try {
-                const resSpesialis = await api.get("/spesialis");
+                const resSpesialis = await api.get(`/spesialis?page=${pageSpesialis}`);
                 const resUsers = await api.get("/users");
                 
                 setSpesialis(resSpesialis.data?.data?.data || []);
+                setLastPageSpesialis(resSpesialis.data?.data?.last_page || 1);
                 setUsers(resUsers.data?.data?.data || []);
                 
             } catch (error) {
@@ -29,8 +35,8 @@ function Dokter() {
         };
         
     useEffect(() => {
-        fetchData();
-    }, []);
+        fetchData(pageSpesialis);
+    }, [pageSpesialis]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -131,6 +137,10 @@ function Dokter() {
             console.log(error);
         }
     };
+
+    const filteredSpesialis = spesialis.filter(s =>
+        s.nama_spesialis.toLowerCase().includes(search.toLowerCase())
+    );
 
     return (
         <div>
@@ -242,16 +252,13 @@ function Dokter() {
                                     <label>Nama Spesialis :</label>
                                     <input
                                         type="text"
-                                        list="list-spesialis"
                                         value={namaSpesialis}
+                                        onClick={() => setShowModal(true)}
                                         onChange={handleNamaSpesialisChange}
+                                        readOnly
+                                        placeholder="Pilih Spesialis"
                                         required
                                     />
-                                    <datalist id="list-spesialis">
-                                        {spesialis.map((s) => (
-                                            <option key={s.id} value={s.nama_spesialis}></option>
-                                        ))}
-                                    </datalist>
                                 </div>
                                 <button type="submit" className="bttn">
                                     {editId ? "Update" : "Tambah"}
@@ -260,6 +267,74 @@ function Dokter() {
                         </div>
                     </div>
                 </div>
+                {showModal && (
+                    <div className="modal-overlay">
+                        <div className="modal">
+                            <h3>Pilih Spesialis</h3>
+
+                            <input
+                                type="text"
+                                placeholder="Cari spesialis..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                            />
+
+                            <div className="modal-body">
+                                {filteredSpesialis.length > 0 ? (
+                                    filteredSpesialis.map(item => (
+                                        <div
+                                            key={item.id}
+                                            className="modal-item"
+                                            onClick={() => {
+                                                setNamaSpesialis(item.nama_spesialis);
+                                                setIdSpesialis(item.id);
+                                                setShowModal(false);
+                                                setSearch("");
+                                            }}
+                                        >
+                                            {item.nama_spesialis}
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p style={{ color: 'var(--text-dim)', fontSize: '12px' }}>
+                                        Tidak ditemukan
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="modal-footer">
+                                <div className="modal-pagination" style={{ marginTop: "10px" }}>
+                                    <button
+                                        className="page-btn"
+                                        disabled={pageSpesialis === 1}
+                                        onClick={() => setPageSpesialis(pageSpesialis - 1)}
+                                    >
+                                        Prev
+                                    </button>
+                                    
+                                    {[...Array(lastPageSpesialis)].map((_, i) => (
+                                        <button
+                                            key={i}
+                                            className={`page-btn ${pageSpesialis === i + 1 ? "active" : ""}`}
+                                            onClick={() => setPageSpesialis(i + 1)}
+                                        >
+                                            {i + 1}
+                                        </button>
+                                    ))}
+
+                                    <button
+                                        className="page-btn"
+                                        disabled={pageSpesialis === lastPageSpesialis}
+                                        onClick={() => setPageSpesialis(pageSpesialis + 1)}
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                                <button className="btn-tutup" onClick={() => setShowModal(false)}>Tutup</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </main>
         </div>
     )

@@ -15,9 +15,9 @@ function JenisPemeriksaan() {
     const [namajenis, setNamaJenis] = useState("");
     const [kategori, setKategori] = useState("");
 
-    const fetchData = async () => {
+    const fetchData = async (page) => {
         try {
-            const response = await api.get("/jenis");
+            const response = await api.get(`/jenis?page=${page}`);
             setJenis(response.data?.data?.data || []);
             setLastPage(response.data?.data?.last_page);
             setTotalJenis(response.data?.data?.total);
@@ -187,34 +187,33 @@ function JenisPemeriksaan() {
                                 </div>
                             </div>
                         </div>
-                    {totalJenis > 10 && (
-                        <div style={{ marginTop: "10px" }}>
-                            <button
-                                disabled={page === 1}
-                                onClick={() => setPage(page - 1)}
-                                >
-                                Prev
-                            </button>
-                            {[...Array(lastPage)].map((_, i) => (
+                        {totalJenis > 10 && (
+                            <div className="modal-pagination" style={{ marginTop: "10px" }}>
                                 <button
-                                key={i}
-                                onClick={() => setPage(i + 1)}
-                                style={{
-                                    fontWeight: page === i + 1 ? "bold" : "normal",
-                                    margin: "0 3px"
-                                }}
+                                    className="page-btn"
+                                    disabled={page === 1}
+                                    onClick={() => setPage(page - 1)}
                                 >
-                                    {i + 1}
+                                    Prev
                                 </button>
-                            ))}
-                            <button
-                                disabled={page === lastPage}
-                                onClick={() => setPage(page + 1)}
+                                {[...Array(lastPage)].map((_, i) => (
+                                    <button
+                                        key={i}
+                                        className={`page-btn ${page === i + 1 ? "active" : ""}`}
+                                        onClick={() => setPage(i + 1)}
+                                    >
+                                        {i + 1}
+                                    </button>
+                                ))}
+                                <button
+                                    className="page-btn"
+                                    disabled={page === lastPage}
+                                    onClick={() => setPage(page + 1)}
                                 >
-                                Next
-                            </button>
-                        </div>
-                    )}
+                                    Next
+                                </button>
+                            </div>
+                        )}
                     </div>
                     <div className="container-form">
                         <div>
