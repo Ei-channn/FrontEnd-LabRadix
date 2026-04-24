@@ -208,34 +208,30 @@ function Pasien() {
                             </div>
                         </div>
                         {totalPasien > 10 && (
-                            <div style={{ marginTop: "10px" }}>
+                            <div className="modal-pagination" style={{ marginTop: "10px" }}>
                                 <button
+                                    className="page-btn"
                                     disabled={page === 1}
                                     onClick={() => setPage(page - 1)}
-                                    >
+                                >
                                     Prev
                                 </button>
-
                                 {[...Array(lastPage)].map((_, i) => (
                                     <button
-                                    key={i}
-                                    onClick={() => setPage(i + 1)}
-                                    style={{
-                                        fontWeight: page === i + 1 ? "bold" : "normal",
-                                        margin: "0 3px"
-                                    }}
+                                        key={i}
+                                        className={`page-btn ${page === i + 1 ? "active" : ""}`}
+                                        onClick={() => setPage(i + 1)}
                                     >
                                         {i + 1}
                                     </button>
                                 ))}
-
                                 <button
+                                    className="page-btn"
                                     disabled={page === lastPage}
                                     onClick={() => setPage(page + 1)}
-                                    >
+                                >
                                     Next
                                 </button>
-
                             </div>
                         )}
                     </div>
