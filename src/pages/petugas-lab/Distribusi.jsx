@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import api from "../../services/api";
-import Nav from "../../components/Nav";
 
 function Distribusi() {
 
@@ -74,7 +73,6 @@ function Distribusi() {
 
     return (
         <div>
-            <Nav />
             <main className="main">
                 <div className="topbar">
                     <div className="page-title">
@@ -90,7 +88,7 @@ function Distribusi() {
                                     Permintaan Selesai
                                 </div>
                             </div>
-                            <div className="card-body">
+                            <div className="card-body" style={{padding: '11px 0 8px'}}>
                                 <table className="req-table">
                                     <thead>
                                         <tr>
@@ -118,7 +116,11 @@ function Distribusi() {
                                                         {item.jenis_pemeriksaan?.nama_jenis}
                                                     </td>
                                                     <td>{item.tanggal_permintaan}</td>
-                                                    <td>{item.status_pemeriksaan}</td>
+                                                    <td>
+                                                        <span className={`status-badge status-selesai`}>
+                                                            {item.status_pemeriksaan}
+                                                        </span>
+                                                    </td>
                                                 </tr>
                                             ))}
                                     </tbody>

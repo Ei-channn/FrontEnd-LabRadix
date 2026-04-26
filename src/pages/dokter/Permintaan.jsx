@@ -1,4 +1,3 @@
-import Nav from "../../components/Nav";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 
@@ -97,7 +96,6 @@ function Permintaan() {
 
     return (
         <div>
-            <Nav />
             <main className="main">
                 <div className="topbar">
                     <div className="page-title">

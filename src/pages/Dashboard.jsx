@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
-import Nav from "../components/Nav";
+import { Link } from "react-router-dom";
 
 function Dashboard() {
 
@@ -10,7 +10,7 @@ function Dashboard() {
     const [pasien, setPasien] = useState([]);
     const [hasil, setHasil] = useState([]);
     const [status, setStatus] = useState([]);
-    const [kritis, setKritis] = useState(0);
+    const [statusPemeriksaan, setStatusPemeriksaan] = useState([]);
     const [distribusi, setDistribusi] = useState([]);
     const [user, setUser] = useState({});
     const [users, setUsers] = useState([]);
@@ -26,7 +26,7 @@ function Dashboard() {
                     resPasien,
                     resHasil,
                     resStatus,
-                    resStatusKritis,
+                    resStatusPemeriksaan,
                     resStatistik,
                     resUser,
                     resUserRole,
@@ -39,7 +39,7 @@ function Dashboard() {
                         api.get("/pasien").catch(() => []),
                         api.get("/hasil").catch(() => []),
                         api.get("/status").catch(() => []),
-                        api.get("/statusKritis").catch(() => []),
+                        api.get("/statusPemeriksaan").catch(() => []),
                         api.get("/statistik").catch(() => []),
                         api.get("/user").catch(() => []),
                         api.get("/userRole").catch(() => []),
@@ -49,13 +49,11 @@ function Dashboard() {
                         api.get("/distribusi").catch(() => [])
                     ]);
 
-                // const data = response.data?.data?.data || [];
-
                 setPermintaan(resPermintaan.data?.data?.data || []);
                 setPasien(resPasien.data?.data?.data || []);
                 setHasil(resHasil.data?.data?.[0]?.data || []);
                 setStatus(resStatus?.data);
-                setKritis(resStatusKritis?.data?.data);
+                setStatusPemeriksaan(resStatusPemeriksaan?.data);
                 setTotalPermintaan(resStatistik.data.data.total_permintaan);
                 setKategori(resStatistik.data.data.per_kategori);
                 setDistribusi(resDistribusi.data?.data?.data || []);
@@ -83,7 +81,6 @@ function Dashboard() {
 
     return (
         <div>
-            <Nav />
             <main className="main">
                 <div className="topbar">
                     <div className="page-title">
@@ -91,10 +88,12 @@ function Dashboard() {
                         Welcome {user?.name}
                     </div>
                     <div className="topbar-right">
-                        <button className="topbar-btn">Hari Ini — {today}</button>
+                        <button className="topbar-btn">Hari Ini - {today}</button>
                         <button className="topbar-btn">Notifikasi</button>
                         {user?.role === "dokter" && (
-                            <button className="topbar-btn primary">+ Permintaan Baru</button>
+                            <Link to="/permintaan">
+                                <button className="topbar-btn primary">+ Permintaan Baru</button>
+                            </Link>
                         )}
                     </div>
                 </div>
@@ -133,7 +132,7 @@ function Dashboard() {
                                 </div>
                             ))}
                             <div className="stat-card c4">
-                                <div className="stat-value">{kritis}</div>
+                                <div className="stat-value">{statusPemeriksaan.kritis || 0}</div>
                                 <div className="stat-label">Nilai Kritis</div>
                             </div>
                         </>
@@ -149,7 +148,9 @@ function Dashboard() {
                                         "Permintaan Aktif" 
                                     }
                             </div> 
-                            <span className="card-action">Lihat Semua</span>
+                            <Link to="/parameter">
+                                <span className="card-action">Lihat Semua</span>
+                            </Link>
                         </div>
                         <div className="card-body" style={{padding: '11px 0 8px'}}>
                             <table className="req-table">
@@ -157,6 +158,7 @@ function Dashboard() {
                                     <>
                                         <thead>
                                             <tr>
+                                                <th>No</th>
                                                 <th>Parameter</th>
                                                 <th>Jenis</th>
                                                 <th>Normal Min</th>
@@ -165,8 +167,15 @@ function Dashboard() {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {Array.isArray(parameter) && parameter.map((item) => (
+                                            {Array.isArray(parameter) && parameter.map((item, index) => (
                                                 <tr key={item.id}>
+                                                    <td>
+                                                        <div className="patient-info">
+                                                            <span className="patient-name">
+                                                                {index + 1}
+                                                            </span>
+                                                        </div>
+                                                    </td>
                                                     <td>
                                                         <div className="patient-info">
                                                             <span className="patient-name">
@@ -263,6 +272,11 @@ function Dashboard() {
                             <div className="card-title">
                                 {user.role === 'admin' ? 'Jenis Pemeriksaan' : "Status Pemeriksaan"}
                             </div>
+                            {user.role === 'admin' && (
+                                <Link to="/jenis">
+                                    <span className="card-action">Lihat Semua</span>
+                                </Link>
+                            )}
                         </div>
                         {user.role === 'admin' && (
                             <div className="card-body" style={{padding: '11px 0 8px'}}>
@@ -356,7 +370,7 @@ function Dashboard() {
                                         <div className="status-item-count" 
                                             style={{color: '#f43f5e'}}
                                         >
-                                            {kritis}
+                                            {statusPemeriksaan.kritis || 0}
                                         </div>
                                     </div>
                                 </div>
@@ -372,7 +386,9 @@ function Dashboard() {
                                     <div className="card-title">
                                         User Data
                                     </div> 
-                                    <span className="card-action">Lihat Semua</span>
+                                    <Link to="/users">
+                                        <span className="card-action">Lihat Semua</span>
+                                    </Link>
                                 </div>
                                 <div className="card-body" style={{padding: '11px 0 8px'}}>
                                     <table className="req-table">
@@ -415,6 +431,9 @@ function Dashboard() {
                                         <span className="card-title-dot"></span>
                                         Pasien Data
                                     </div>
+                                    <Link to="/pasien">
+                                        <span className="card-action">Lihat Semua</span>
+                                    </Link>
                                 </div>
                                 <div className="card-body" style={{padding: '11px 0 8px'}}>
                                     <table className="req-table">
@@ -465,7 +484,6 @@ function Dashboard() {
                                 <div className="card-title">
                                     Flagging Nilai
                                 </div>
-                                <span className="card-action">Lihat Semua</span>
                             </div>
                             <div className="card-body">
                                 <div className="flag-list">
@@ -497,7 +515,7 @@ function Dashboard() {
                     {user.role === 'dokter' && (
                         <div className="card" style={{animationDelay: "0.35s"}}>
                             <div className="card-header">
-                                <div className="card-title">Volume Harian</div>
+                                <div className="card-title">Volume Mingguan</div>
                                 <span className="card-action">7 Hari</span>
                             </div>
                             <div className="card-body">

@@ -1,4 +1,3 @@
-import Nav from "../../components/Nav";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 
@@ -12,7 +11,6 @@ function Parameter() {
     const [lastPageJenis, setLastPageJenis] = useState(1);
     const [jenis, setJenis] = useState([]);
     const [user, setUser] = useState([]);
-    const [laporan, setLaporan] = useState([]);
     const [editId, setEditId] = useState(null); 
 
     const [namaParameter, setNamaParameter] = useState("");
@@ -75,23 +73,6 @@ function Parameter() {
         fetchData();
     }, []);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/laporan");
-
-                const data = response.data;
-
-                setLaporan(data);
-
-            } catch (error) {
-                console.log("Error fetch laporan:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
     const handleNamaJenisChange = (e) => {
         const value = e.target.value;
         setNamaJenis(value);
@@ -148,7 +129,7 @@ function Parameter() {
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm("Yakin ingin menghapus data ini?")) {
+        if (window.confirm("Apakah Anda yakin ingin menghapus data ini?")) {
             try {
                 await api.delete(`/parameter/${id}`);
                 fetchParameters(page);
@@ -164,7 +145,6 @@ function Parameter() {
 
     return (
         <div>
-            <Nav />
             <main className="main">
                 <div className="topbar">
                     <div className="page-title">
@@ -178,24 +158,12 @@ function Parameter() {
                 </div>
                 <div className="container-main">
                     <div className="container-permintaan">
-                        <div className="grid-5">
-                            <div className="stat-card c1">
-                                <div className="stat-value">{laporan.pasien_harian}</div>
-                                <div className="stat-label">Total Jenis Pemeriksaan</div>
-                            </div>
-                            <div className="stat-card c2">
-                                <div className="stat-value">{laporan.total_pasien}</div>
-                                <div className="stat-label">Total Pasien</div>
-                            </div>
-                        </div>
                         <div className="grid-3">
                             <div className="card">
                                 <div className="card-header">
                                     <div className="card-title">
                                         <span className="card-title-dot"></span>
-                                            {user?.role === 'admin' ? 'Parameter Pemeriksaan' :
-                                                "Permintaan Aktif" 
-                                            }
+                                        Parameter Jenis Pemeriksaan
                                     </div> 
                                 </div>
                                 <div className="card-body" style={{padding: '11px 0 8px'}}>

@@ -456,6 +456,7 @@
   .status-antri { background: rgba(245,158,11,0.12); color: var(--amber); }
   .status-proses { background: rgba(124,92,191,0.15); color: var(--accent-bright); }
   .status-selesai { background: rgba(16,185,129,0.12); color: var(--green); }
+  .status-arsip { background: rgba(157,125,232,0.12); color: var(--accent-bright); }
 
   .status-dot {
     width: 5px; height: 5px;
@@ -532,6 +533,11 @@
     padding: 2px 5px;
     border-radius: 3px;
   }
+
+  .bar-normal { background: var(--green); }
+.bar-tinggi { background: var(--accent-bright); }
+.bar-rendah { background: var(--amber); }
+.bar-kritis { background: var(--rose); }
 
   .bar-lab { background: linear-gradient(180deg, var(--teal), var(--teal-dim)); }
   .bar-rad { background: linear-gradient(180deg, var(--accent-bright), var(--accent)); }

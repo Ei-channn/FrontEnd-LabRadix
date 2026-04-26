@@ -1,4 +1,3 @@
-import Nav from "../../components/Nav";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 
@@ -9,7 +8,6 @@ function JenisPemeriksaan() {
     const [page, setPage] = useState(1);
     const [lastPage, setLastPage] = useState(1);
     const [user, setUser] = useState([]);
-    const [laporan, setLaporan] = useState([]);
     const [editId, setEditId] = useState(null); 
 
     const [namajenis, setNamaJenis] = useState("");
@@ -38,23 +36,6 @@ function JenisPemeriksaan() {
                 const data = response.data;
 
                 setUser(data);
-
-            } catch (error) {
-                console.log("Error fetch permintaan:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/laporan");
-
-                const data = response.data;
-
-                setLaporan(data);
 
             } catch (error) {
                 console.log("Error fetch permintaan:", error);
@@ -98,17 +79,18 @@ function JenisPemeriksaan() {
     };
 
     const handleDelete = async (id) => {
-        try {
-            await api.delete(`/jenis/${id}`);
-            fetchData();
-        } catch (error) {
-            console.log(error);
+        if (window.confirm("Apakah Anda yakin ingin menghapus data ini?")) {
+            try {
+                await api.delete(`/jenis/${id}`);
+                fetchData();
+            } catch (error) {
+                console.log(error);
+            }
         }
     };
 
     return (
         <div>
-            <Nav />
             <main className="main">
                 <div className="topbar">
                     <div className="page-title">
@@ -122,24 +104,12 @@ function JenisPemeriksaan() {
                 </div>
                 <div className="container-main">
                     <div className="container-permintaan">
-                        <div className="grid-5">
-                            <div className="stat-card c1">
-                                <div className="stat-value">{laporan.pasien_harian}</div>
-                                <div className="stat-label">Total Jenis Pemeriksaan</div>
-                            </div>
-                            <div className="stat-card c2">
-                                <div className="stat-value">{laporan.total_pasien}</div>
-                                <div className="stat-label">Total Pasien</div>
-                            </div>
-                        </div>
                         <div className="grid-3">
                             <div className="card">
                                 <div className="card-header">
                                     <div className="card-title">
                                         <span className="card-title-dot"></span>
-                                            {user?.role === 'admin' ? 'Parameter Pemeriksaan' :
-                                                "Permintaan Aktif" 
-                                            }
+                                        Jenis Pemeriksaan
                                     </div> 
                                 </div>
                                 <div className="card-body" style={{padding: '11px 0 8px'}}>
@@ -170,7 +140,12 @@ function JenisPemeriksaan() {
                                                         {item.parameter_pemeriksaan_count}
                                                     </td>
                                                     <td style={{fontSize: "11px"}}>
-                                                        {item.kategori}
+                                                        <span className={
+                                                            `type-badge type-${
+                                                                item.kategori
+                                                            }`}>
+                                                            {item.kategori}
+                                                        </span>
                                                     </td>
                                                     <td className="btttn">
                                                         <button className="btn-edit" onClick={() => handleEdit(item)}>

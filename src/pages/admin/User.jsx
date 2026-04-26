@@ -1,4 +1,3 @@
-import Nav from "../../components/Nav";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 
@@ -9,7 +8,6 @@ function User() {
     const [page, setPage] = useState(1);
     const [lastPage, setLastPage] = useState(1);
     const [user, setUser] = useState([]);
-    const [laporan, setLaporan] = useState([]);
     const [editId, setEditId] = useState(null); 
 
     const [name, setName] = useState("");
@@ -43,23 +41,6 @@ function User() {
                 const data = response.data;
 
                 setUser(data);
-
-            } catch (error) {
-                console.log("Error fetch permintaan:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await api.get("/laporan");
-
-                const data = response.data;
-
-                setLaporan(data);
 
             } catch (error) {
                 console.log("Error fetch permintaan:", error);
@@ -112,17 +93,18 @@ function User() {
     };
 
     const handleDelete = async (id) => {
-        try {
-            await api.delete(`/users/${id}`);
-            fetchData();
-        } catch (error) {
-            console.log(error);
+        if (window.confirm("Apakah Anda yakin ingin menghapus data ini?")) {
+            try {
+                await api.delete(`/users/${id}`);
+                fetchData();
+            } catch (error) {
+                console.log(error);
+            }
         }
     };
 
     return (
         <div>
-            <Nav />
             <main className="main">
                 <div className="topbar">
                     <div className="page-title">
@@ -136,16 +118,6 @@ function User() {
                 </div>
                 <div className="container-main">
                     <div className="container-permintaan">
-                        <div className="grid-5">
-                            <div className="stat-card c1">
-                                <div className="stat-value">{laporan.pasien_harian}</div>
-                                <div className="stat-label">Pasien Harian</div>
-                            </div>
-                            <div className="stat-card c2">
-                                <div className="stat-value">{laporan.total_pasien}</div>
-                                <div className="stat-label">Total Pasien</div>
-                            </div>
-                        </div>
                         <div className="grid-3">
                             <div className="card">
                                 <div className="card-header">
@@ -160,6 +132,7 @@ function User() {
                                     <table className="req-table">
                                         <thead>
                                             <tr>
+                                                <th>No</th>
                                                 <th>Nama</th>
                                                 <th>Email</th>
                                                 <th>Role</th>
@@ -170,8 +143,9 @@ function User() {
                                         <tbody>
                                             {Array.isArray(users) && users.
                                                 filter(u => u.role !== 'admin').
-                                                map((item) => (
+                                                map((item, index) => (
                                                 <tr key={item.id}>
+                                                    <td>{index + 1}</td>
                                                     <td>
                                                         <div className="patient-info">
                                                             <span className="patient-name">

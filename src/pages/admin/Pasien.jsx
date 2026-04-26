@@ -1,4 +1,3 @@
-import Nav from "../../components/Nav";
 import { useEffect, useState } from "react";
 import api from "../../services/api";
 
@@ -113,17 +112,18 @@ function Pasien() {
     };
 
     const handleDelete = async (id) => {
-        try {
-            await api.delete(`/pasien/${id}`);
-            fetchData();
-        } catch (error) {
-            console.log(error);
+        if (window.confirm("Apakah Anda yakin ingin menghapus data ini?")) {
+            try {
+                await api.delete(`/pasien/${id}`);
+                fetchData();
+            } catch (error) {
+                console.log(error);
+            }
         }
     };
 
     return (
         <div>
-            <Nav />
             <main className="main">
                 <div className="topbar">
                     <div className="page-title">
@@ -152,15 +152,14 @@ function Pasien() {
                                 <div className="card-header">
                                     <div className="card-title">
                                         <span className="card-title-dot"></span>
-                                            {user?.role === 'admin' ? 'Parameter Pemeriksaan' :
-                                                "Permintaan Aktif" 
-                                            }
+                                        Data Pasien
                                     </div> 
                                 </div>
                                 <div className="card-body" style={{padding: '11px 0 8px'}}>
                                     <table className="req-table">
                                         <thead>
                                             <tr>
+                                                <th>No</th>
                                                 <th>Nama</th>
                                                 <th>Tanggal Lahir</th>
                                                 <th>Jenis Kelamin</th>
@@ -170,8 +169,9 @@ function Pasien() {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {Array.isArray(pasien) && pasien.map((item) => (
+                                            {Array.isArray(pasien) && pasien.map((item, index) => (
                                                 <tr key={item.id}>
+                                                    <td>{index + 1}</td>
                                                     <td>
                                                         <div className="patient-info">
                                                             <span className="patient-name">
