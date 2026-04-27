@@ -261,7 +261,7 @@ function Parameter() {
                     </div>
                     <div className="container-form">
                         <div>
-                            <h3>Form Permintaan Pemeriksaan</h3>
+                            <h3>Tambah Parameter</h3>
                             <form onSubmit={handleSubmit}>
                                 
                                 <div style={{ marginBottom: '10px' }} className="form">
